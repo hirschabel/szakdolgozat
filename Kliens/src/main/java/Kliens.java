@@ -5,35 +5,35 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class Kliens {
-    private Socket kliens;
+    private Socket szerver;
     private PrintWriter out;
     private BufferedReader in;
 
-    public void csatlakozas(String ip, int port) {
+    public boolean csatlakozas(String ip, int port, String felhasznaloNev, String jelszo) {
         try {
-            kliens = new Socket(ip, port);
-            out = new PrintWriter(kliens.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(kliens.getInputStream()));
+            szerver = new Socket(ip, port);
+            out = new PrintWriter(szerver.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(szerver.getInputStream()));
+            if ("Csatlakozas sikertelen".equals(uzenetKuldes(felhasznaloNev.concat(";").concat(jelszo)))) {
+                lecsatlakozas();
+                return false;
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return true;
     }
 
-    public String uzenetKuldes(String msg) {
-        try {
-            out.println(msg);
-            return in.readLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public String uzenetKuldes(String msg) throws IOException {
+        out.println(msg);
+        return in.readLine();
     }
 
     public void lecsatlakozas() {
         try {
             in.close();
             out.close();
-            kliens.close();
+            szerver.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

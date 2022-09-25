@@ -16,8 +16,4 @@ public class Jatekos {
         this.name = name;
         this.password = password;
     }
-
-    public boolean megegyezik(String felhasznaloNev, String jelszo) {
-        return this.name.equals(felhasznaloNev) && this.password.equals(jelszo);
-    }
 }

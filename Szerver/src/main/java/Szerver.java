@@ -17,7 +17,7 @@ public class Szerver {
       new Jatekos(3, "felhasznalo", "123")
     };
     //------------
-    private final int SERVER_PORT = 52564;
+    private final int SZERVER_PORT = 52564;
     private ServerSocket szerver;
     private int jatekosSzam;
 
@@ -25,7 +25,7 @@ public class Szerver {
         System.out.println("---Szerver---");
         jatekosSzam = 0;
         try {
-            szerver = new ServerSocket(SERVER_PORT);
+            szerver = new ServerSocket(SZERVER_PORT);
             csatlakozasFogadas();
         } catch (IOException e) {
             e.printStackTrace();
@@ -36,8 +36,7 @@ public class Szerver {
         while (jatekosSzam < 10) {
             Socket kliens = szerver.accept();
             jatekosSzam++;
-            KliensKapcsolat kliensKapcsolat = new KliensKapcsolat(kliens);
-            Thread t = new Thread(kliensKapcsolat);
+            Thread t = new Thread(new KliensKapcsolat(kliens));
             t.start();
         }
     }
@@ -50,11 +49,9 @@ public class Szerver {
 
         private KliensKapcsolat(Socket kliens) {
             this.kliens = kliens;
-            //log("Jatekos #" + jatekosSzam + " csatlakozott!", 0);
             try {
                 in = new BufferedReader(new InputStreamReader(kliens.getInputStream()));
                 out = new PrintWriter(kliens.getOutputStream(), true);
-                bejelentkezes();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -66,30 +63,42 @@ public class Szerver {
             String jelszo = adatok.split(";")[1];
 
             for (Jatekos curr : jatekosok) {
-                if (curr.megegyezik(felhasznaloNev, jelszo)) {
+                if (curr.getName().equals(felhasznaloNev) && curr.getPassword().equals(jelszo)) {
                     jatekos = curr;
                     log(curr.getName() + " csatlakozott!", 0);
+                    out.println("Sikeres csatlakozas");
                     return;
                 }
             }
-            out.println("Rossz adatok!");
+            out.println("Csatlakozas sikertelen");
+            throw new IOException("Csatlakozas sikertelen");
         }
 
 
         @Override
         public void run() {
             try {
-                int szamlalo = 0; // TESTING ONLY
+                bejelentkezes();
                 while(true) {
-                    out.println(szamlalo);
+                    /*
+                    TODO: KLIENS MEGJELENITES, GUI LÉTREHOZÁSA (BASIC)
+                     */
+                    // küldje el az állapotot
+                    String kuldendoSzoveg = "Szia!";
+                    out.println(kuldendoSzoveg);
+                    log(kuldendoSzoveg, 1);
+
+                    // fogadja az inputot
                     log(in.readLine(), 3);
-                    szamlalo++;
-                    //todo stop when exception
                 }
             } catch (IOException e) {
                 try {
                     stop();
-                    log("Jatekos #" + jatekosSzam + " lecsatlakozott!", 0);
+                    if ("Csatlakozas sikertelen".equals(e.getMessage())) {
+                        log("Csatlakozas sikertelen!", 2);
+                    } else if ("Connection reset".equals(e.getMessage())) {
+                        log(jatekos.getName() + " lecsatlakozott!", 0);
+                    }
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -106,14 +115,13 @@ public class Szerver {
         private void log(String szoveg, int csatorna) {
             String csatornaSzoveg = switch (csatorna) {
                 case 0 -> "[LOG]";
-                case 1 -> "[SZERVER]";
+                case 1 -> "[TO " + jatekos.getName() + "]";
                 case 2 -> "[ERROR]";
-                case 3 -> "[" + kliens.toString() + "]";
+                case 3 -> "[FROM " + jatekos.getName() + "]";
                 default -> "[UNKNOWN]";
             };
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
-            LocalDateTime now = LocalDateTime.now();
-            System.out.println(dtf.format(now) + csatornaSzoveg + szoveg);
+            System.out.println(dtf.format(LocalDateTime.now()) + csatornaSzoveg + szoveg);
         }
     }
 
