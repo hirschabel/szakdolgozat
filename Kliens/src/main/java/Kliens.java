@@ -20,14 +20,13 @@ public class Kliens {
     }
 
     public String uzenetKuldes(String msg) {
-        String resp = null;
         try {
-            resp = in.readLine();
-            out.println(resp);
+            out.println(msg);
+            return in.readLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return resp;
+        return null;
     }
 
     public void lecsatlakozas() {

@@ -14,7 +14,7 @@ public class SzerverTest {
 
     @Test
     public void uzenetKuldesTeszt() {
-        String resp = kliens.uzenetKuldes("Hello server!");
+        String resp = kliens.uzenetKuldes("admin;admin");
         assertEquals("[SERVER] Hello client!", resp);
     }
 

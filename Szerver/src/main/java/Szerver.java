@@ -1,3 +1,5 @@
+import hu.szakdolgozat.Jatekos;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,6 +10,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Szerver {
+    //------------
+    private Jatekos[] jatekosok = {
+      new Jatekos(1, "admin", "admin"),
+      new Jatekos(2, "joe", "joe"),
+      new Jatekos(3, "felhasznalo", "123")
+    };
+    //------------
     private final int SERVER_PORT = 52564;
     private ServerSocket szerver;
     private int jatekosSzam;
@@ -34,20 +43,38 @@ public class Szerver {
     }
 
     private class KliensKapcsolat implements Runnable {
+        Jatekos jatekos;
         private final Socket kliens;
         private PrintWriter out;
         private BufferedReader in;
 
         private KliensKapcsolat(Socket kliens) {
             this.kliens = kliens;
-            log("Jatekos #" + jatekosSzam + " csatlakozott!", 0);
+            //log("Jatekos #" + jatekosSzam + " csatlakozott!", 0);
             try {
-                out = new PrintWriter(kliens.getOutputStream(), true);
                 in = new BufferedReader(new InputStreamReader(kliens.getInputStream()));
+                out = new PrintWriter(kliens.getOutputStream(), true);
+                bejelentkezes();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
+        private void bejelentkezes() throws IOException{
+            String adatok = in.readLine();
+            String felhasznaloNev = adatok.split(";")[0];
+            String jelszo = adatok.split(";")[1];
+
+            for (Jatekos curr : jatekosok) {
+                if (curr.megegyezik(felhasznaloNev, jelszo)) {
+                    jatekos = curr;
+                    log(curr.getName() + " csatlakozott!", 0);
+                    return;
+                }
+            }
+            out.println("Rossz adatok!");
+        }
+
 
         @Override
         public void run() {
