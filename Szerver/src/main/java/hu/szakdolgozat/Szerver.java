@@ -1,4 +1,4 @@
-import hu.szakdolgozat.Jatekos;
+package hu.szakdolgozat;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,6 +8,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Szerver {
     //------------
@@ -74,54 +77,75 @@ public class Szerver {
             throw new IOException("Csatlakozas sikertelen");
         }
 
-
         @Override
         public void run() {
             try {
                 bejelentkezes();
-                while(true) {
-                    /*
-                    TODO: KLIENS MEGJELENITES, GUI LÉTREHOZÁSA (BASIC)
-                     */
-                    // küldje el az állapotot
-                    String kuldendoSzoveg = "Szia!";
-                    out.println(kuldendoSzoveg);
-                    log(kuldendoSzoveg, 1);
+                final String[] kuldendoSzoveg = {"nem nyomtál semmit"};
 
-                    // fogadja az inputot
-                    log(in.readLine(), 3);
-                }
-            } catch (IOException e) {
-                try {
-                    stop();
-                    if ("Csatlakozas sikertelen".equals(e.getMessage())) {
-                        log("Csatlakozas sikertelen!", 2);
-                    } else if ("Connection reset".equals(e.getMessage())) {
-                        log(jatekos.getName() + " lecsatlakozott!", 0);
+                ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+                executor.scheduleAtFixedRate(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            // beolvasni kliens inputot
+                            // számításokat végezni
+                            // visszaadni a játék állapotot
+
+                            String bejovo = in.readLine();
+                            log(bejovo, 3);
+
+                            String szovegAmitKuldVissza = "null".equals(bejovo) ? "nem nyomtal semmit" : bejovo;
+                            out.println(szovegAmitKuldVissza);
+                            log(szovegAmitKuldVissza, 1);
+
+//                            out.println(kuldendoSzoveg[0]);
+//                            log(kuldendoSzoveg[0],1 );
+//                            String bejovo = in.readLine();
+//                            kuldendoSzoveg[0] = "null".equals(bejovo) ? "nem nyomtál semmit" : bejovo;
+//                            log(bejovo, 3);
+                        } catch (IOException ex) {
+                            executor.shutdown();
+                            stop(true);
+                        }
                     }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
+                }, 0, 5, TimeUnit.SECONDS);
+
+
+            } catch (IOException e) {
+                if ("Csatlakozas sikertelen".equals(e.getMessage())) {
+                    log("Csatlakozas sikertelen!", 2);
+                    stop(false);
                 }
             }
         }
 
-        private void stop() throws IOException {
-            in.close();
-            out.close();
-            kliens.close();
-            jatekosSzam--;
+
+
+        private void stop(boolean lecsatlakozas) {
+            try {
+                if (lecsatlakozas) {
+                    log(jatekos.getName() + " lecsatlakozott!", 0);
+                }
+                in.close();
+                out.close();
+                kliens.close();
+                jatekosSzam--;
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
 
         private void log(String szoveg, int csatorna) {
             String csatornaSzoveg = switch (csatorna) {
                 case 0 -> "[LOG]";
-                case 1 -> "[TO " + jatekos.getName() + "]";
+                case 1 -> "[SZERVER->" + jatekos.getName() + "]";
                 case 2 -> "[ERROR]";
-                case 3 -> "[FROM " + jatekos.getName() + "]";
+                case 3 -> "[SZERVER<-" + jatekos.getName() + "]";
                 default -> "[UNKNOWN]";
             };
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
-            System.out.println(dtf.format(LocalDateTime.now()) + csatornaSzoveg + szoveg);
+            System.out.println(dtf.format(LocalDateTime.now()) + " " + csatornaSzoveg + " " + szoveg);
         }
     }
 
