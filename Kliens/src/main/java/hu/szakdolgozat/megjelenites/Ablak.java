@@ -13,9 +13,6 @@ public class Ablak extends JFrame implements ActionListener {
     private JButton connectButton2;
 
     public Ablak() {
-        connectButton = new JButton("CONNECT");
-        connectButton.setBounds(ABLAK_SZELESSEG / 2 - 50, ABLAK_MAGASSAG / 2 - 15, 100, 30);
-        connectButton.addActionListener(this);
 
         connectButton2 = new JButton("CONNECT2");
         connectButton2.setBounds(ABLAK_SZELESSEG / 2 - 200, ABLAK_MAGASSAG / 2 - 60, 100, 30);
@@ -29,8 +26,7 @@ public class Ablak extends JFrame implements ActionListener {
 
 
         this.setLocationRelativeTo(null);
-        this.add(connectButton);
-        this.add(connectButton2);
+        this.add(new BejelentkezoKepernyo(ABLAK_SZELESSEG, ABLAK_MAGASSAG));
     }
 
     @Override

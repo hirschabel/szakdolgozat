@@ -34,9 +34,16 @@ public class SzerverKapcsolat {
         return true;
     }
 
+    public void uzenetKuld(String msg) {
+        out.println(msg);
+    }
+
+    public String uzenetFogad() throws IOException {
+        return in.readLine();
+    }
+
     public String uzenetKuldes(String msg) throws IOException {
         out.println(msg);
-        out.println("hehexd");
         return in.readLine();
     }
 

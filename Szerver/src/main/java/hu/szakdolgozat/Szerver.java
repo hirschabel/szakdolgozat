@@ -23,6 +23,7 @@ public class Szerver {
     private final int SZERVER_PORT = 52564;
     private ServerSocket szerver;
     private int jatekosSzam;
+    private String[] clientInput;
 
     public Szerver() {
         System.out.println("---Szerver---");
@@ -35,7 +36,7 @@ public class Szerver {
         }
     }
 
-    private void csatlakozasFogadas() throws IOException {
+    private void csatlakozasFogadas() throws IOException { // TODO: játékosszám maximum elérése után, ha lecsatlakozik valaki, akkor is fogadjon
         while (jatekosSzam < 10) {
             Socket kliens = szerver.accept();
             jatekosSzam++;
@@ -45,91 +46,79 @@ public class Szerver {
     }
 
     private class KliensKapcsolat implements Runnable {
-        Jatekos jatekos;
+        private Jatekos jatekos;
         private final Socket kliens;
-        private PrintWriter out;
-        private BufferedReader in;
+        private PrintWriter output;
+        private BufferedReader input;
+
+        private boolean csatlakozva;
 
         private KliensKapcsolat(Socket kliens) {
             this.kliens = kliens;
-            try {
-                in = new BufferedReader(new InputStreamReader(kliens.getInputStream()));
-                out = new PrintWriter(kliens.getOutputStream(), true);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            csatlakozva = true;
+            clientInput = new String[] { "null" };
+
+            bejelentkezes();
+
+            new Thread(() -> {
+                try {
+                    while (csatlakozva) {
+                        clientInput[0] = input.readLine();
+                        log(clientInput[0], 3);
+                    }
+                } catch (IOException e) {
+                    stop(true);
+                }
+            }).start();
         }
 
-        private void bejelentkezes() throws IOException{
-            String adatok = in.readLine();
-            String felhasznaloNev = adatok.split(";")[0];
-            String jelszo = adatok.split(";")[1];
+        private void bejelentkezes() {
+            try {
+                input = new BufferedReader(new InputStreamReader(kliens.getInputStream()));
+                output = new PrintWriter(kliens.getOutputStream(), true);
 
-            for (Jatekos curr : jatekosok) {
-                if (curr.getName().equals(felhasznaloNev) && curr.getPassword().equals(jelszo)) {
-                    jatekos = curr;
-                    log(curr.getName() + " csatlakozott!", 0);
-                    out.println("Sikeres csatlakozas");
-                    return;
+                String adatok = input.readLine();
+                String[] felhasznalo = new String[]{adatok.split(";")[0], adatok.split(";")[1]};
+
+                for (Jatekos curr : jatekosok) {
+                    if (curr.getName().equals(felhasznalo[0]) && curr.getPassword().equals(felhasznalo[1])) {
+                        jatekos = curr;
+                        log(curr.getName() + " csatlakozott!", 0);
+                        output.println("Sikeres csatlakozas");
+                        return;
+                    }
                 }
+            } catch (IOException e) {
+                stop(false);
             }
-            out.println("Csatlakozas sikertelen");
-            throw new IOException("Csatlakozas sikertelen");
         }
 
         @Override
         public void run() {
-            try {
-                bejelentkezes();
-                final String[] kuldendoSzoveg = {"nem nyomtál semmit"};
-
-                ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-                executor.scheduleAtFixedRate(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            // beolvasni kliens inputot
-                            // számításokat végezni
-                            // visszaadni a játék állapotot
-
-                            String bejovo = in.readLine();
-                            log(bejovo, 3);
-
-                            String szovegAmitKuldVissza = "null".equals(bejovo) ? "nem nyomtal semmit" : bejovo;
-                            out.println(szovegAmitKuldVissza);
-                            log(szovegAmitKuldVissza, 1);
-
-//                            out.println(kuldendoSzoveg[0]);
-//                            log(kuldendoSzoveg[0],1 );
-//                            String bejovo = in.readLine();
-//                            kuldendoSzoveg[0] = "null".equals(bejovo) ? "nem nyomtál semmit" : bejovo;
-//                            log(bejovo, 3);
-                        } catch (IOException ex) {
-                            executor.shutdown();
-                            stop(true);
-                        }
-                    }
-                }, 0, 5, TimeUnit.SECONDS);
-
-
-            } catch (IOException e) {
-                if ("Csatlakozas sikertelen".equals(e.getMessage())) {
-                    log("Csatlakozas sikertelen!", 2);
-                    stop(false);
+            ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+            executor.scheduleAtFixedRate(() -> {
+                if (csatlakozva) {
+                    String szovegAmitKuldVissza = "null".equals(clientInput[0]) ? "nem nyomtal semmit" : clientInput[0];
+                    output.println(szovegAmitKuldVissza);
+                    log(szovegAmitKuldVissza, 1);
+                    clientInput[0] = "null";
+                } else {
+                    executor.shutdown();
                 }
-            }
+            }, 0, 2, TimeUnit.SECONDS);
         }
-
-
 
         private void stop(boolean lecsatlakozas) {
             try {
                 if (lecsatlakozas) {
                     log(jatekos.getName() + " lecsatlakozott!", 0);
+                } else {
+                    log("Csatlakozas sikertelen!", 2);
                 }
-                in.close();
-                out.close();
+                input.close();
+                output.close();
                 kliens.close();
+                csatlakozva = false;
                 jatekosSzam--;
             } catch (IOException ex) {
                 ex.printStackTrace();
