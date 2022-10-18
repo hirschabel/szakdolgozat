@@ -55,7 +55,7 @@ public class Szerver {
 
         private KliensKapcsolat(Socket kliens) {
             this.kliens = kliens;
-            csatlakozva = true;
+            csatlakozva = false;
             clientInput = new String[] { "null" };
 
             bejelentkezes();
@@ -84,10 +84,12 @@ public class Szerver {
                     if (curr.getName().equals(felhasznalo[0]) && curr.getPassword().equals(felhasznalo[1])) {
                         jatekos = curr;
                         log(curr.getName() + " csatlakozott!", 0);
-                        output.println("Sikeres csatlakozas");
+                        csatlakozva = true;
+                        output.println("Sikeres csatlakozas!");
                         return;
                     }
                 }
+                output.println("Hibas adatok!");
             } catch (IOException e) {
                 stop(false);
             }

@@ -6,16 +6,12 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-
-/* TODO
-    Amint a kliens megkapja a szervertől az információkat, akkor egyből küld egy null-t, és ha érzékel utána gombnyomást, akkor azt is elküldi
-    A szerver mindig az utolsót nézi, ezért így mindig lesz legalább egy (a null) üzenet és ha nyom valmit, az is el lesz juttatva
- */
-
 public class SzerverKapcsolat {
     private Socket szerver;
     private PrintWriter out;
     private BufferedReader in;
+
+    private boolean csatlakozva;
 
     public boolean csatlakozas(String ip, int port, String felhasznaloNev, String jelszo) {
         try {
@@ -23,27 +19,39 @@ public class SzerverKapcsolat {
             out = new PrintWriter(szerver.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(szerver.getInputStream()));
             // BEJELENTKEZÉS
-            if ("Csatlakozas sikertelen".equals(uzenetKuldes(felhasznaloNev.concat(";").concat(jelszo)))) {
-                lecsatlakozas();
-                return false;
-            }
+            bejelentkezes(felhasznaloNev, jelszo);
 
+            csatlakozva = true;
+            new Thread(() -> {
+                try {
+                    while (csatlakozva) {
+                        String fogadottUzenet = uzenetFogad();
+                        System.out.println(fogadottUzenet);
+                    }
+                } catch (IOException e) {
+                    lecsatlakozas();
+                }
+            }).start();
+            return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            return false;
         }
-        return true;
+    }
+
+    private void bejelentkezes(String felhasznaloNev, String jelszo) throws IOException {
+        uzenetKuld(felhasznaloNev.concat(";").concat(jelszo));
+        String input = uzenetFogad();
+        if ("Hibas adatok!".equals(input)) {
+            lecsatlakozas();
+            throw new IOException("Hibas bejelentkezesi adatok!");
+        }
     }
 
     public void uzenetKuld(String msg) {
         out.println(msg);
     }
 
-    public String uzenetFogad() throws IOException {
-        return in.readLine();
-    }
-
-    public String uzenetKuldes(String msg) throws IOException {
-        out.println(msg);
+    private String uzenetFogad() throws IOException {
         return in.readLine();
     }
 
@@ -51,7 +59,9 @@ public class SzerverKapcsolat {
         try {
             in.close();
             out.close();
+            csatlakozva = false;
             szerver.close();
+            System.out.println("LECSATLAKOZVA");
         } catch (IOException e) {
             e.printStackTrace();
         }
