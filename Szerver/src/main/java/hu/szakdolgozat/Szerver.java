@@ -1,13 +1,11 @@
 package hu.szakdolgozat;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -26,6 +24,10 @@ public class Szerver {
     private String[] clientInput;
 
     public Szerver() {
+        setup();
+    }
+
+    public void setup() {
         System.out.println("---Szerver---");
         jatekosSzam = 0;
         try {
@@ -47,16 +49,48 @@ public class Szerver {
 
     private class KliensKapcsolat implements Runnable {
         private Jatekos jatekos;
+
+        private int sor, oszlop;
         private final Socket kliens;
-        private PrintWriter output;
+        //private PrintWriter output;
+        private ObjectOutputStream output;
         private BufferedReader input;
 
         private boolean csatlakozva;
+        private int[][] terkep2 = new int[][]{
+                {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
+                {0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0, 0, 0, 1}
+        };
+
+        private int[][] terkep;
 
         private KliensKapcsolat(Socket kliens) {
             this.kliens = kliens;
             csatlakozva = false;
             clientInput = new String[] { "null" };
+            sor = oszlop = 4;
+            terkep = new int[][] {
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+            };
+            terkep[sor][oszlop] = 1;
+
 
             bejelentkezes();
 
@@ -65,6 +99,8 @@ public class Szerver {
                     while (csatlakozva) {
                         clientInput[0] = input.readLine();
                         log(clientInput[0], 3);
+                        // TODO: KLIENS INPUT KEZELÉS
+                        //inputKezeles(clientInput[0]);
                     }
                 } catch (IOException e) {
                     stop(true);
@@ -72,10 +108,38 @@ public class Szerver {
             }).start();
         }
 
+        private void inputKezeles(String input) {
+            System.out.println("input: " + input);
+            switch (input) {
+                case "W" -> mozgas(0, -1);
+                case "D" -> mozgas(1, 0);
+                case "A" -> mozgas(-1, 0);
+                case "S" -> mozgas(0, 1);
+                default -> {
+                    return;
+                }
+            }
+        }
+
+        private void mozgas(int sorDiff, int oszlopDiff) {
+            if (mozoghatOda(sor + sorDiff, oszlop + oszlopDiff)) {
+                terkep[sor][oszlop] = 0;
+                sor = sor + sorDiff;
+                oszlop = oszlop + oszlopDiff;
+                terkep[sor][oszlop] = 1;
+            }
+        }
+
+        private boolean mozoghatOda(int x, int y) {
+            return x >= 0 && y >= 0 && x < 10 && y < 10;
+        }
+
+
         private void bejelentkezes() {
             try {
                 input = new BufferedReader(new InputStreamReader(kliens.getInputStream()));
-                output = new PrintWriter(kliens.getOutputStream(), true);
+                //output = new PrintWriter(kliens.getOutputStream(), true);
+                output = new ObjectOutputStream(kliens.getOutputStream());
 
                 String adatok = input.readLine();
                 String[] felhasznalo = new String[]{adatok.split(";")[0], adatok.split(";")[1]};
@@ -85,11 +149,12 @@ public class Szerver {
                         jatekos = curr;
                         log(curr.getName() + " csatlakozott!", 0);
                         csatlakozva = true;
-                        output.println("Sikeres csatlakozas!");
+                        output.writeChars("Sikeres csatlakozas!");
+                        //output.println("Sikeres csatlakozas!");
                         return;
                     }
                 }
-                output.println("Hibas adatok!");
+                output.writeChars("Hibas adatok!");
             } catch (IOException e) {
                 stop(false);
             }
@@ -100,14 +165,18 @@ public class Szerver {
             ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
             executor.scheduleAtFixedRate(() -> {
                 if (csatlakozva) {
-                    String szovegAmitKuldVissza = "null".equals(clientInput[0]) ? "nem nyomtal semmit" : clientInput[0];
-                    output.println(szovegAmitKuldVissza);
-                    log(szovegAmitKuldVissza, 1);
-                    clientInput[0] = "null";
+                    try {
+                        inputKezeles(clientInput[0]);
+                        output.writeObject(terkep.clone());
+                        output.reset();
+                        clientInput[0] = "null";
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 } else {
                     executor.shutdown();
                 }
-            }, 0, 2, TimeUnit.SECONDS);
+            }, 0, 350, TimeUnit.MILLISECONDS);
         }
 
         private void stop(boolean lecsatlakozas) {

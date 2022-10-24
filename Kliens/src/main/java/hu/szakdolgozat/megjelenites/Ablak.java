@@ -1,24 +1,21 @@
 package hu.szakdolgozat.megjelenites;
 
-import javax.swing.*;
+import hu.szakdolgozat.SajatListener;
+import hu.szakdolgozat.controller.JatekmenetController;
+import hu.szakdolgozat.szerver_kapcsolat.SzerverKapcsolat;
+
+import javax.swing.JFrame;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class Ablak extends JFrame implements ActionListener {
+public class Ablak extends JFrame implements SajatListener {
     private final int ABLAK_SZELESSEG = 800;
-    private final int ABLAK_MAGASSAG = 600;
+    private final int ABLAK_MAGASSAG = 800;
+    private Kepernyo kepernyo;
 
-    private JButton connectButton;
-    private JButton connectButton2;
+    private SzerverKapcsolat kapcsolat;
+
 
     public Ablak() {
-
-        connectButton2 = new JButton("CONNECT2");
-        connectButton2.setBounds(ABLAK_SZELESSEG / 2 - 200, ABLAK_MAGASSAG / 2 - 60, 100, 30);
-        connectButton2.addActionListener(this);
-
-
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.getContentPane().setPreferredSize(new Dimension(ABLAK_SZELESSEG, ABLAK_MAGASSAG));
         this.setLayout(null);
@@ -26,15 +23,30 @@ public class Ablak extends JFrame implements ActionListener {
 
 
         this.setLocationRelativeTo(null);
-        this.add(new BejelentkezoKepernyo(ABLAK_SZELESSEG, ABLAK_MAGASSAG));
+        kepernyo = new BejelentkezoKepernyo(ABLAK_SZELESSEG, ABLAK_MAGASSAG, this);
+        this.add(kepernyo);
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == connectButton) {
-            // connect to server (with name and pass, here:admin;admin)
-        } else if (e.getSource() == connectButton2) {
-            // this is just for example to how to continue the if
-        }
+    public void jatekmenetMegjelenites(SzerverKapcsolat kapcsolat) {
+        System.out.println("---jatekmenet megjelenites---");
+        this.kapcsolat = kapcsolat;
+        megjelenit(new JatekmenetKepernyo(ABLAK_SZELESSEG, ABLAK_MAGASSAG, kapcsolat));
+    }
+
+    @Override
+    public void bejelentkezesMegjelenites() {
+
+        System.out.println("bejelentkezes megjelenites");
+    }
+
+    private void megjelenit(Kepernyo kepernyo) {
+        this.remove(this.kepernyo);
+        this.kepernyo = kepernyo;
+        this.add(kepernyo);
+        this.revalidate();
+        this.repaint();
+        this.kepernyo.setFocusable(true);
+        this.kepernyo.requestFocusInWindow();
     }
 }
