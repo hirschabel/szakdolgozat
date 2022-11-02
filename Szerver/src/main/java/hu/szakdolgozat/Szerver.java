@@ -1,8 +1,13 @@
 package hu.szakdolgozat;
 
+import hu.szakdolgozat.dao.JatekosDao;
+import hu.szakdolgozat.Jatekos;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -57,18 +62,6 @@ public class Szerver {
         private BufferedReader input;
 
         private boolean csatlakozva;
-        private int[][] terkep2 = new int[][]{
-                {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
-                {0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0, 0, 0, 0, 0, 1}
-        };
 
         private int[][] terkep;
 
@@ -99,8 +92,6 @@ public class Szerver {
                     while (csatlakozva) {
                         clientInput[0] = input.readLine();
                         log(clientInput[0], 3);
-                        // TODO: KLIENS INPUT KEZELÉS
-                        //inputKezeles(clientInput[0]);
                     }
                 } catch (IOException e) {
                     stop(true);
@@ -138,24 +129,22 @@ public class Szerver {
         private void bejelentkezes() {
             try {
                 input = new BufferedReader(new InputStreamReader(kliens.getInputStream()));
-                //output = new PrintWriter(kliens.getOutputStream(), true);
                 output = new ObjectOutputStream(kliens.getOutputStream());
 
                 String adatok = input.readLine();
                 String[] felhasznalo = new String[]{adatok.split(";")[0], adatok.split(";")[1]};
 
-                for (Jatekos curr : jatekosok) {
-                    if (curr.getName().equals(felhasznalo[0]) && curr.getPassword().equals(felhasznalo[1])) {
-                        jatekos = curr;
-                        log(curr.getName() + " csatlakozott!", 0);
-                        csatlakozva = true;
-                        output.writeChars("Sikeres csatlakozas!");
-                        //output.println("Sikeres csatlakozas!");
-                        return;
-                    }
+
+                if (new JatekosDao().jatekosLetezik(felhasznalo[0], felhasznalo[1])) {
+                    jatekos = new Jatekos(felhasznalo[0], felhasznalo[1]);
+                    log(jatekos.getName() + " csatlakozott!", 0);
+                    csatlakozva = true;
+                    output.writeObject("Sikeres csatlakozas!");
+                    return;
                 }
-                output.writeChars("Hibas adatok!");
-            } catch (IOException e) {
+                output.writeObject("Hibas adatok!");
+                stop(false);
+            } catch (SQLException | IOException e) {
                 stop(false);
             }
         }

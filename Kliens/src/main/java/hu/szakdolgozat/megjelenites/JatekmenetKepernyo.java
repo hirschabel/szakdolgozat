@@ -3,16 +3,8 @@ package hu.szakdolgozat.megjelenites;
 import hu.szakdolgozat.controller.JatekmenetController;
 import hu.szakdolgozat.szerver_kapcsolat.SzerverKapcsolat;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class JatekmenetKepernyo extends Kepernyo {
     private final KeyListener keyListener;
@@ -49,7 +41,7 @@ public class JatekmenetKepernyo extends Kepernyo {
         for (int sor = 0; sor < 10; sor++) {
             for (int oszlop = 0; oszlop < 10; oszlop++) {
                 if (terkep[sor][oszlop] == 0) {
-                    g.setColor(Color.BLACK);
+                    g.setColor(Color.LIGHT_GRAY);
                 } else {
                     g.setColor(Color.RED);
                 }

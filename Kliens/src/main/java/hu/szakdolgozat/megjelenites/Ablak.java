@@ -1,13 +1,11 @@
 package hu.szakdolgozat.megjelenites;
 
-import hu.szakdolgozat.SajatListener;
-import hu.szakdolgozat.controller.JatekmenetController;
 import hu.szakdolgozat.szerver_kapcsolat.SzerverKapcsolat;
 
 import javax.swing.JFrame;
 import java.awt.*;
 
-public class Ablak extends JFrame implements SajatListener {
+public class Ablak extends JFrame {
     private final int ABLAK_SZELESSEG = 800;
     private final int ABLAK_MAGASSAG = 800;
     private Kepernyo kepernyo;
@@ -27,14 +25,14 @@ public class Ablak extends JFrame implements SajatListener {
         this.add(kepernyo);
     }
 
-    @Override
+
     public void jatekmenetMegjelenites(SzerverKapcsolat kapcsolat) {
         System.out.println("---jatekmenet megjelenites---");
         this.kapcsolat = kapcsolat;
         megjelenit(new JatekmenetKepernyo(ABLAK_SZELESSEG, ABLAK_MAGASSAG, kapcsolat));
     }
 
-    @Override
+
     public void bejelentkezesMegjelenites() {
 
         System.out.println("bejelentkezes megjelenites");

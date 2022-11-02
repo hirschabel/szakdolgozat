@@ -10,7 +10,6 @@ public class SzerverKapcsolat {
     private Socket szerver;
     private PrintWriter out;
     private ObjectInputStream in;
-    //private BufferedReader in;
 
     private boolean csatlakozva;
 
@@ -19,36 +18,27 @@ public class SzerverKapcsolat {
             szerver = new Socket(ip, port);
             out = new PrintWriter(szerver.getOutputStream(), true);
             in = new ObjectInputStream(szerver.getInputStream());
-            //in = new BufferedReader(new InputStreamReader(szerver.getInputStream()));
-            // BEJELENTKn
             bejelentkezes(felhasznaloNev, jelszo);
 
             csatlakozva = true;
             new Thread(() -> {
                 try {
                     while (csatlakozva) {
-                        //String fogadottUzenet = uzenetFogad();
-
-                        //System.out.println(Arrays.deepToString((int[][])in.readObject()));
-                        //terkep = (int[][])in.readObject();
-
-                        int[][] valami = (int[][])in.readObject();
-                        System.out.println("KLIENS:\t\t" + Arrays.deepToString(valami));
-                        terkep = valami;
-                        //terkep = valami.clone();
-                        //System.out.println(fogadottUzenet);
+                        int[][] tempTerkep = (int[][])in.readObject();
+                        System.out.println("KLIENS:\t\t" + Arrays.deepToString(tempTerkep));
+                        terkep = tempTerkep;
                     }
                 } catch (IOException | ClassNotFoundException e) {
                     lecsatlakozas();
                 }
             }).start();
             return true;
-        } catch (IOException e) {
+        } catch (ClassNotFoundException | IOException e) {
             return false;
         }
     }
 
-    private void bejelentkezes(String felhasznaloNev, String jelszo) throws IOException {
+    private void bejelentkezes(String felhasznaloNev, String jelszo) throws IOException, ClassNotFoundException {
         uzenetKuld(felhasznaloNev.concat(";").concat(jelszo));
         String input = uzenetFogad();
         if ("Hibas adatok!".equals(input)) {
@@ -61,9 +51,8 @@ public class SzerverKapcsolat {
         out.println(msg);
     }
 
-    private String uzenetFogad() throws IOException {
-        // TODO: térkép fogadása
-        return in.readLine();
+    private String uzenetFogad() throws IOException, ClassNotFoundException {
+        return (String) in.readObject();
     }
 
     public void lecsatlakozas() {
