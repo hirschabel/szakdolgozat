@@ -21,8 +21,6 @@ public class SzerverKliensTest {
 
     @BeforeEach
     void letrehozas() {
-
-
         client = new StubKliens();
     }
 
@@ -40,18 +38,25 @@ public class SzerverKliensTest {
     void alaphelyzetTest() throws IOException, ClassNotFoundException {
         client.csatlakozas();
         int[][] terkep = client.getTerkep();
-
         Assertions.assertEquals(1, terkep[4][4]);
     }
 
     @ParameterizedTest
     @MethodSource("lepesParameterek")
-    void felLepesTest(char inputKarakter, int[] pozicio) throws IOException, ClassNotFoundException {
+    void lepesUjPozicioTeszt(char inputKarakter, int[] pozicio) throws IOException, ClassNotFoundException {
         client.csatlakozas();
         client.lepes(inputKarakter);
         int[][] terkep = client.getTerkep();
-
         Assertions.assertEquals(1, terkep[pozicio[0]][pozicio[1]]);
+    }
+
+    @ParameterizedTest
+    @MethodSource("lepesParameterek")
+    void lepesRegiPozicioTeszt(char inputKarakter, int[] pozicio) throws IOException, ClassNotFoundException {
+        client.csatlakozas();
+        client.lepes(inputKarakter);
+        int[][] terkep = client.getTerkep();
+        Assertions.assertEquals(0, terkep[4][4]);
     }
 
     private static Stream<Arguments> lepesParameterek() {
