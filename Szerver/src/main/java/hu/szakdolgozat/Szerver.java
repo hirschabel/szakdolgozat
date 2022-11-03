@@ -1,28 +1,18 @@
 package hu.szakdolgozat;
 
 import hu.szakdolgozat.dao.JatekosDao;
-import hu.szakdolgozat.Jatekos;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Szerver {
-    //------------
-    private Jatekos[] jatekosok = {
-      new Jatekos(1, "admin", "admin"),
-      new Jatekos(2, "joe", "joe"),
-      new Jatekos(3, "felhasznalo", "123")
-    };
-    //------------
     private final int SZERVER_PORT = 52564;
     private ServerSocket szerver;
     private int jatekosSzam;
@@ -57,9 +47,8 @@ public class Szerver {
 
         private int sor, oszlop;
         private final Socket kliens;
-        //private PrintWriter output;
         private ObjectOutputStream output;
-        private BufferedReader input;
+        private ObjectInputStream input;
 
         private boolean csatlakozva;
 
@@ -90,10 +79,10 @@ public class Szerver {
             new Thread(() -> {
                 try {
                     while (csatlakozva) {
-                        clientInput[0] = input.readLine();
+                        clientInput[0] = (String) input.readObject();
                         log(clientInput[0], 3);
                     }
-                } catch (IOException e) {
+                } catch (IOException | ClassNotFoundException e) {
                     stop(true);
                 }
             }).start();
@@ -102,13 +91,11 @@ public class Szerver {
         private void inputKezeles(String input) {
             System.out.println("input: " + input);
             switch (input) {
-                case "W" -> mozgas(0, -1);
-                case "D" -> mozgas(1, 0);
-                case "A" -> mozgas(-1, 0);
-                case "S" -> mozgas(0, 1);
-                default -> {
-                    return;
-                }
+                case "W" -> mozgas(-1, 0);
+                case "D" -> mozgas(0, 1);
+                case "A" -> mozgas(0, -1);
+                case "S" -> mozgas(1, 0);
+                default -> {}
             }
         }
 
@@ -128,10 +115,10 @@ public class Szerver {
 
         private void bejelentkezes() {
             try {
-                input = new BufferedReader(new InputStreamReader(kliens.getInputStream()));
+                input = new ObjectInputStream(kliens.getInputStream());
                 output = new ObjectOutputStream(kliens.getOutputStream());
 
-                String adatok = input.readLine();
+                String adatok = (String) input.readObject();
                 String[] felhasznalo = new String[]{adatok.split(";")[0], adatok.split(";")[1]};
 
 
@@ -144,7 +131,7 @@ public class Szerver {
                 }
                 output.writeObject("Hibas adatok!");
                 stop(false);
-            } catch (SQLException | IOException e) {
+            } catch (SQLException | IOException | ClassNotFoundException e) {
                 stop(false);
             }
         }
@@ -180,8 +167,7 @@ public class Szerver {
                 kliens.close();
                 csatlakozva = false;
                 jatekosSzam--;
-            } catch (IOException ex) {
-                ex.printStackTrace();
+            } catch (IOException ignored) {
             }
         }
 

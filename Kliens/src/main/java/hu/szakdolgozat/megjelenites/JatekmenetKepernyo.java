@@ -48,8 +48,8 @@ public class JatekmenetKepernyo extends Kepernyo {
 
 
                 int hossz = this.ABLAK_MAGASSAG / 10;
-                int x = hossz * sor;
-                int y = hossz * oszlop;
+                int x = hossz * oszlop;
+                int y = hossz * sor;
                 //hossz = oszlop != 9 && sor != 9 ? hossz : hossz - 10;
                 g.fillRect(x, y, hossz, hossz);
             }

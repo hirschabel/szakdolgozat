@@ -51,8 +51,8 @@ public class BejelentkezoKepernyo extends Kepernyo implements ActionListener {
             String jelszo = new String(jelszoInput.getPassword());
             if (felhasznalonev.length() > 0 && jelszo.length() > 0 && kapcsolat.csatlakozas("127.0.0.1", 52564, felhasznalonev, jelszo)) {
                 System.out.println("Login Success");
+                kapcsolat.inputHallgatas();
 
-                //((SajatListener) this).jatekmenetMegjelenites(kapcsolat);
                 ablak.jatekmenetMegjelenites(kapcsolat);
 
             } else {

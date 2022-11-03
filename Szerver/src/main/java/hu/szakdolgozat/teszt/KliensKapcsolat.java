@@ -1,4 +1,6 @@
-package hu.szakdolgozat;
+package hu.szakdolgozat.teszt;
+
+import hu.szakdolgozat.Jatekos;
 
 import java.io.BufferedReader;
 import java.io.IOException;
