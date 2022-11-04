@@ -8,6 +8,8 @@ public class Jatekos {
     private String name;
     private String password;
 
+    private Pozicio pozicio;
+
     public Jatekos(int id, String name, String password) {
         this.id = id;
         this.name = name;
@@ -17,5 +19,9 @@ public class Jatekos {
     public Jatekos(String name, String password) {
         this.name = name;
         this.password = password;
+    }
+
+    public Jatekos(Pozicio pozicio) {
+        this.pozicio = pozicio;
     }
 }

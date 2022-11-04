@@ -17,7 +17,7 @@ public class KliensKapcsolat implements Runnable {
     private Jatekos jatekos;
 
     private int sor, oszlop;
-    private final Socket kliens;
+    private Socket kliens;
     private ObjectOutputStream output;
     private ObjectInputStream input;
     private String[] clientInput;
