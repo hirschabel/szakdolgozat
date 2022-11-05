@@ -38,6 +38,7 @@ public class Jatekmenet implements Runnable {
         }
 
         terkep2.send(terkep3);
+        System.out.println("Elkuldve");
     }
 
     private Pozicio inputKezeles(String irany, Pozicio pozicio) {

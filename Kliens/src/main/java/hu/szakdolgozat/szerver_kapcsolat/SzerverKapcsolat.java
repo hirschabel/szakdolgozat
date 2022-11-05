@@ -36,7 +36,8 @@ public class SzerverKapcsolat {
                     //System.out.println("KLIENS:\t\t" + Arrays.deepToString(tempTerkep));
                     //terkep = tempTerkep;
                     terkep = terkepOlvas();
-                    System.out.println("KLIENS:\t\t" + Arrays.deepToString(terkep));
+                    System.out.println("Olvasva");
+                    //System.out.println("KLIENS:\t\t" + Arrays.deepToString(terkep));
                 }
             } catch (IOException | ClassNotFoundException e) {
                 lecsatlakozas();
@@ -75,7 +76,7 @@ public class SzerverKapcsolat {
             out.close();
             csatlakozva = false;
             szerver.close();
-            System.out.println("LECSATLAKOZVA");
+            //System.out.println("LECSATLAKOZVA");
             return true;
         } catch (IOException e) {
             e.printStackTrace();

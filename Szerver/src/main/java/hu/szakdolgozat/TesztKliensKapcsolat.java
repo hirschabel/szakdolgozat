@@ -70,7 +70,7 @@ public class TesztKliensKapcsolat implements Runnable {
     @Override
     public void run() {
         //terkep.waitFirst();
-        terkep.firstWait();
+        //terkep.firstWait();
         new Thread(() -> {
             try {
                 while (connected) {
@@ -88,7 +88,7 @@ public class TesztKliensKapcsolat implements Runnable {
                 int[][] kapottTerkep = terkep.receive();
                 output.writeObject(kapottTerkep);
                 output.reset();
-                System.out.println(Arrays.deepToString(kapottTerkep));
+                //System.out.println(Arrays.deepToString(kapottTerkep));
             } catch (IOException e) {
                 System.out.println("outputbol torolve");
                 connected = false;

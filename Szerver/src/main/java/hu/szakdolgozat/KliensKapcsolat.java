@@ -62,7 +62,7 @@ public class KliensKapcsolat implements Runnable {
     }
 
     private void inputKezeles(String input) {
-        System.out.println("input: " + input);
+        //System.out.println("input: " + input);
         switch (input) {
             case "W" -> mozgas(-1, 0);
             case "D" -> mozgas(0, 1);
@@ -153,6 +153,6 @@ public class KliensKapcsolat implements Runnable {
             default -> "[UNKNOWN]";
         };
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
-        System.out.println(dtf.format(LocalDateTime.now()) + " " + csatornaSzoveg + " " + szoveg);
+        //System.out.println(dtf.format(LocalDateTime.now()) + " " + csatornaSzoveg + " " + szoveg);
     }
 }
