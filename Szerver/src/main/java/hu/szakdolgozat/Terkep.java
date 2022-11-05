@@ -1,31 +1,22 @@
 package hu.szakdolgozat;
 
+import java.util.List;
+
 public class Terkep {
-    private int[][] terkep;
+    private List<Jatekos> jatekosok;
 
-    private boolean transfer = true;
-
-    public synchronized void firstWait() {
-        try {
-            wait();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public synchronized int[][] receive() {
+    public synchronized List<Jatekos> receive() {
         try {
             wait();
         } catch (InterruptedException e) {
             e.printStackTrace();;
         }
 
-        return terkep;
+        return jatekosok;
     }
 
-    public synchronized void send(int[][] terkep) {
-        this.terkep = terkep;
-        //transfer = false;
+    public synchronized void send(List<Jatekos> jatekosok) {
+        this.jatekosok = jatekosok;
         notifyAll();
     }
 }

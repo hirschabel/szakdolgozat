@@ -1,5 +1,6 @@
 package hu.szakdolgozat;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Jatekmenet implements Runnable {
@@ -7,6 +8,8 @@ public class Jatekmenet implements Runnable {
     private List<Csatlakozas> csatlakozasok;
     private Terkep terkep2;
     private int[][] terkep3;
+
+    private List<Jatekos> jatekosok;
 
     public Jatekmenet(int[][] terkep, List<Csatlakozas> csatlakozasok, Terkep terkep2) {
         this.terkep = terkep;
@@ -29,15 +32,17 @@ public class Jatekmenet implements Runnable {
 
     @Override
     public void run() {
+        jatekosok = new ArrayList<>();
         for (Csatlakozas csatlakozas : csatlakozasok) {
             Jatekos currJatekos = csatlakozas.getJatekos();
             if (currJatekos != null) {
+                jatekosok.add(currJatekos);
                 currJatekos.setPozicio(inputKezeles(csatlakozas.getUtasitas(), currJatekos.getPozicio()));
             }
             csatlakozas.setUtasitas("null");
         }
 
-        terkep2.send(terkep3);
+        terkep2.send(jatekosok);
         System.out.println("Elkuldve");
     }
 

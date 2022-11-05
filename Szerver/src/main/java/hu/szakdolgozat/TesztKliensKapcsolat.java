@@ -6,22 +6,20 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.sql.SQLException;
-import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
 public class TesztKliensKapcsolat implements Runnable {
     private final Csatlakozas csatlakozas;
+    private final Function<Csatlakozas, Boolean> torles;
+    private final Terkep terkep;
     private ObjectOutputStream output;
     private ObjectInputStream input;
-    private final String[] kliensInput;
-    private final Function<Csatlakozas, Boolean> torles;
     private boolean connected;
-    private Terkep terkep;
 
     public TesztKliensKapcsolat(Csatlakozas csatlakozas, Function<Csatlakozas, Boolean> torles, Terkep terkep) {
         this.csatlakozas = csatlakozas;
         this.torles = torles;
-        this.kliensInput = new String[] { "null" };
         this.terkep = terkep;
         try {
             input = new ObjectInputStream(csatlakozas.getKliens().getInputStream());
@@ -50,27 +48,10 @@ public class TesztKliensKapcsolat implements Runnable {
             connected = false;
             torles.apply(csatlakozas);
         }
-
-
     }
-/*
-    @Override
-    public void run() {
-        try {
-            while (true) {
-                kliensInput[0] = (String) input.readObject();
-                // input valtozoba iras
-            }
-        } catch (IOException | ClassNotFoundException e) {
-            torles.apply(csatlakozas);
-        }
-    }
- */
 
     @Override
     public void run() {
-        //terkep.waitFirst();
-        //terkep.firstWait();
         new Thread(() -> {
             try {
                 while (connected) {
@@ -85,10 +66,15 @@ public class TesztKliensKapcsolat implements Runnable {
 
         while (connected) {
             try {
-                int[][] kapottTerkep = terkep.receive();
+                int[][] kapottTerkep = new int[10][10];
+                List<Jatekos> jatekosok = terkep.receive();
+                for (Jatekos jatekos : jatekosok) {
+                    int sor = jatekos.getPozicio().getSorPozicio();
+                    int oszlop = jatekos.getPozicio().getOszlopPozicio();
+                    kapottTerkep[sor][oszlop] = jatekos == csatlakozas.getJatekos() ? 1 : 2;
+                }
                 output.writeObject(kapottTerkep);
                 output.reset();
-                //System.out.println(Arrays.deepToString(kapottTerkep));
             } catch (IOException e) {
                 System.out.println("outputbol torolve");
                 connected = false;
