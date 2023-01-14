@@ -48,7 +48,7 @@ public class BejelentkezoKepernyo extends Kepernyo implements ActionListener {
         if ("login".equals(e.getActionCommand())) {
             SzerverKapcsolat kapcsolat = new SzerverKapcsolat();
             String felhasznalonev = felhasznalonevInput.getText();
-            String jelszo = new String(jelszoInput.getPassword());
+            String jelszo = new String(jelszoInput.getPassword()); // TODO: Encryption
             if (felhasznalonev.length() > 0 && jelszo.length() > 0 && kapcsolat.csatlakozas("127.0.0.1", 52564, felhasznalonev, jelszo)) {
                 System.out.println("Login Success");
                 kapcsolat.inputHallgatas();
