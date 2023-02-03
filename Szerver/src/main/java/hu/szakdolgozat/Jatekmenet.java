@@ -6,15 +6,17 @@ import java.util.List;
 public class Jatekmenet implements Runnable {
     private int[][] terkep;
     private List<Csatlakozas> csatlakozasok;
-    private Terkep terkep2;
+    private JatekosLista jatekosLista2;
+    private TerkepLista terkepLista;
     private int[][] terkep3;
 
     private List<Jatekos> jatekosok;
 
-    public Jatekmenet(int[][] terkep, List<Csatlakozas> csatlakozasok, Terkep terkep2) {
+    public Jatekmenet(int[][] terkep, List<Csatlakozas> csatlakozasok, JatekosLista jatekosLista2, TerkepLista terkepLista) {
         this.terkep = terkep;
         this.csatlakozasok = csatlakozasok;
-        this.terkep2 = terkep2;
+        this.jatekosLista2 = jatekosLista2;
+        this.terkepLista = terkepLista;
 
         terkep3 = new int[][] {
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -42,8 +44,8 @@ public class Jatekmenet implements Runnable {
             csatlakozas.setUtasitas("null");
         }
 
-        terkep2.send(jatekosok);
-        System.out.println("Elkuldve");
+        jatekosLista2.send(jatekosok);
+        terkepLista.send(terkep);
     }
 
     private Pozicio inputKezeles(String irany, Pozicio pozicio) {
@@ -70,10 +72,10 @@ public class Jatekmenet implements Runnable {
         int sor = pozicio.getSorPozicio();
         int oszlop = pozicio.getOszlopPozicio();
         if (mozoghatOda(sor + sorDiff, oszlop + oszlopDiff)) {
-            terkep3[sor][oszlop] = 0;
+            terkep[sor][oszlop] = 0;
             sor = sor + sorDiff;
             oszlop = oszlop + oszlopDiff;
-            terkep3[sor][oszlop] = 1;
+            terkep[sor][oszlop] = 1;
 
             return new Pozicio(sor, oszlop);
         }
@@ -81,6 +83,6 @@ public class Jatekmenet implements Runnable {
     }
 
     private boolean mozoghatOda(int x, int y) { // TODO valid határértékekkel + akadály kereséssel
-        return x >= 0 && y >= 0 && x < 10 && y < 10;
+        return x >= 0 && y >= 0 && x < 100 && y < 100;
     }
 }

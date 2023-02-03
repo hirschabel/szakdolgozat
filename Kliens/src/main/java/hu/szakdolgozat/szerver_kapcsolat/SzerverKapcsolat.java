@@ -1,5 +1,7 @@
 package hu.szakdolgozat.szerver_kapcsolat;
 
+import hu.szakdolgozat.Pozicio;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.Arrays;
@@ -36,7 +38,8 @@ public class SzerverKapcsolat {
                     //System.out.println("KLIENS:\t\t" + Arrays.deepToString(tempTerkep));
                     //terkep = tempTerkep;
                     terkep = terkepOlvas();
-                    System.out.println("Olvasva");
+                    int[] jatekosPoz = intOlvas();
+                    System.out.println("Olvasva (" + jatekosPoz[0] + "," + jatekosPoz[1] + ")");
                     //System.out.println("KLIENS:\t\t" + Arrays.deepToString(terkep));
                 }
             } catch (IOException | ClassNotFoundException e) {
@@ -47,6 +50,14 @@ public class SzerverKapcsolat {
 
     public int[][] terkepOlvas() throws IOException, ClassNotFoundException {
         return (int[][])in.readObject();
+    }
+
+    public int[] intOlvas() throws IOException, ClassNotFoundException {
+        return (int[])in.readObject();
+    }
+
+    public Pozicio pozicioOlvas() throws IOException, ClassNotFoundException {
+        return (Pozicio)in.readObject();
     }
 
     private void bejelentkezes(String felhasznaloNev, String jelszo) throws IOException, ClassNotFoundException {

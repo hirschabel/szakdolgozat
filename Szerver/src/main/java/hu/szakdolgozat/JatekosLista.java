@@ -2,7 +2,7 @@ package hu.szakdolgozat;
 
 import java.util.List;
 
-public class Terkep {
+public class JatekosLista {
     private List<Jatekos> jatekosok;
 
     public synchronized List<Jatekos> receive() {

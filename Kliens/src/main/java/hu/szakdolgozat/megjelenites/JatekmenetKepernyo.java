@@ -38,14 +38,16 @@ public class JatekmenetKepernyo extends Kepernyo {
             return;
         }
 
-        for (int sor = 0; sor < 10; sor++) {
-            for (int oszlop = 0; oszlop < 10; oszlop++) {
+        for (int sor = 0; sor < 9; sor++) {
+            for (int oszlop = 0; oszlop < 9; oszlop++) {
                 if (terkep[sor][oszlop] == 0) {
                     g.setColor(Color.LIGHT_GRAY);
                 } else if (terkep[sor][oszlop] == 2) {
                     g.setColor(Color.BLUE);
                 } else if (terkep[sor][oszlop] == 1) {
                     g.setColor(Color.RED);
+                } else if (terkep[sor][oszlop] == -1) {
+                    g.setColor(Color.magenta);
                 }
 
 

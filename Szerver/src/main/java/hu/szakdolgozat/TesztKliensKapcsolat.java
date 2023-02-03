@@ -11,16 +11,21 @@ import java.util.function.Function;
 
 public class TesztKliensKapcsolat implements Runnable {
     private final Csatlakozas csatlakozas;
+    //private final String jatekosNev;
     private final Function<Csatlakozas, Boolean> torles;
-    private final Terkep terkep;
+    private final JatekosLista jatekosLista;
+    private final TerkepLista terkepLista;
     private ObjectOutputStream output;
     private ObjectInputStream input;
     private boolean connected;
 
-    public TesztKliensKapcsolat(Csatlakozas csatlakozas, Function<Csatlakozas, Boolean> torles, Terkep terkep) {
+    public TesztKliensKapcsolat(Csatlakozas csatlakozas, Function<Csatlakozas, Boolean> torles, JatekosLista jatekosLista,
+                                    TerkepLista terkepLista) {
         this.csatlakozas = csatlakozas;
+        //this.jatekosNev = "";
         this.torles = torles;
-        this.terkep = terkep;
+        this.jatekosLista = jatekosLista;
+        this.terkepLista = terkepLista;
         try {
             input = new ObjectInputStream(csatlakozas.getKliens().getInputStream());
             output = new ObjectOutputStream(csatlakozas.getKliens().getOutputStream());
@@ -32,7 +37,8 @@ public class TesztKliensKapcsolat implements Runnable {
             };
 
             if (new JatekosDao().jatekosLetezik(felhasznalo[0], felhasznalo[1])) {
-                csatlakozas.setJatekos(new Jatekos(new Pozicio(4, 4)));
+                csatlakozas.setJatekos(new Jatekos(felhasznalo[0], new Pozicio(4, 4)));
+                //this.jatekosNev = felhasznalo[0];
                 output.writeObject("Sikeres csatlakozas!");
                 System.out.println("Sikeres csatlakozas");
                 connected = true;
@@ -66,14 +72,20 @@ public class TesztKliensKapcsolat implements Runnable {
 
         while (connected) {
             try {
-                int[][] kapottTerkep = new int[10][10];
-                List<Jatekos> jatekosok = terkep.receive();
+                int hatarSor = 9, hatarOszlop = 9;
+                int[][] kapottTerkep = terkepLista.receive();
+                List<Jatekos> jatekosok = jatekosLista.receive();
+
+                this.csatlakozas.setJatekos(jatekosok.get(jatekosok.indexOf(this.csatlakozas.getJatekos())));
+                int[][] kisTerkep = kisTerkepSzerzes(kapottTerkep, hatarSor, hatarOszlop);
                 for (Jatekos jatekos : jatekosok) {
-                    int sor = jatekos.getPozicio().getSorPozicio();
-                    int oszlop = jatekos.getPozicio().getOszlopPozicio();
-                    kapottTerkep[sor][oszlop] = jatekos == csatlakozas.getJatekos() ? 1 : 2;
+                    if (this.csatlakozas.getJatekos().getName().equals(jatekos.getName())) {
+                        this.csatlakozas.getJatekos().setPozicio(jatekos.getPozicio());
+                    }
                 }
-                output.writeObject(kapottTerkep);
+                output.writeObject(kisTerkep);
+                output.writeObject(new int[] {csatlakozas.getJatekos().getPozicio().getSorPozicio(),
+                    csatlakozas.getJatekos().getPozicio().getOszlopPozicio()});
                 output.reset();
             } catch (IOException e) {
                 System.out.println("outputbol torolve");
@@ -81,5 +93,22 @@ public class TesztKliensKapcsolat implements Runnable {
                 torles.apply(csatlakozas);
             }
         }
+    }
+
+    private int[][] kisTerkepSzerzes(int[][] nagyTerkep, int terkepSor, int terkepOszlop) {
+        int[][] kisTerkep = new int[10][10];
+        Pozicio poz = csatlakozas.getJatekos().getPozicio();
+        for (int i = 0, sor = poz.getSorPozicio() - (terkepSor / 2); i < terkepSor; i++, sor++) {
+            for(int j = 0, oszlop = poz.getOszlopPozicio() - (terkepOszlop / 2); j < terkepOszlop; j++, oszlop++) {
+                if (sor < 0 || oszlop < 0 || sor >= 100 || oszlop >= 100) {
+                    kisTerkep[i][j] = -1;
+                    continue;
+                }
+                kisTerkep[i][j] = nagyTerkep[sor][oszlop];
+            }
+        }
+
+
+        return kisTerkep;
     }
 }

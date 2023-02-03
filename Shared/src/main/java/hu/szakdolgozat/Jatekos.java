@@ -24,4 +24,13 @@ public class Jatekos {
     public Jatekos(Pozicio pozicio) {
         this.pozicio = pozicio;
     }
+
+    public Jatekos(String name, Pozicio pozicio) {
+        this.name = name;
+        this.pozicio = pozicio;
+    }
+
+    public String toString() {
+        return this.id + " " + this.name + " (" + this.getPozicio().getSorPozicio() + ";" + this.getPozicio().getOszlopPozicio() + ")";
+    }
 }

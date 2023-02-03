@@ -15,7 +15,8 @@ public class Szerver {
     private ServerSocket szerver;
     private List<Csatlakozas> csatlakozasok;
     private int[][] terkep;
-    private Terkep terkep99;
+    private JatekosLista jatekosLista99;
+    private TerkepLista terkepLista;
 
     public Szerver() {
         System.out.println("---Szerver---");
@@ -25,8 +26,9 @@ public class Szerver {
             csatlakozasok = new ArrayList<>();
 
             //Jatekmenet jatekmenet = new Jatekmenet(terkep, csatlakozasok);
-            terkep99 = new Terkep();
-            Runnable jatekmenet = new Jatekmenet(terkep, csatlakozasok, terkep99);
+            jatekosLista99 = new JatekosLista();
+            terkepLista = new TerkepLista();
+            Runnable jatekmenet = new Jatekmenet(terkep, csatlakozasok, jatekosLista99, terkepLista);
 
             ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
             executor.scheduleAtFixedRate(jatekmenet, 0, 250, TimeUnit.MILLISECONDS);
@@ -44,7 +46,7 @@ public class Szerver {
             Csatlakozas csatlakozas = new Csatlakozas(null, kliens);
             csatlakozasok.add(csatlakozas);
 
-            new Thread(new TesztKliensKapcsolat(csatlakozas, deleteCsatlakozas, terkep99)).start();
+            new Thread(new TesztKliensKapcsolat(csatlakozas, deleteCsatlakozas, jatekosLista99, terkepLista)).start();
         }
     }
 
