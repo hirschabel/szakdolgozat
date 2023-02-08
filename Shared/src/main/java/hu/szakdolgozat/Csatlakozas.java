@@ -10,8 +10,7 @@ public class Csatlakozas {
     private Socket kliens;
     private String utasitas;
 
-    public Csatlakozas(Jatekos jatekos, Socket kliens) {
-        this.jatekos = jatekos;
+    public Csatlakozas(Socket kliens) {
         this.kliens = kliens;
         this.utasitas = "null";
     }

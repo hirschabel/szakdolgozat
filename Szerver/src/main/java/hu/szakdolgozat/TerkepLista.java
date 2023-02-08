@@ -9,7 +9,6 @@ public class TerkepLista {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
         return terkep;
     }
 

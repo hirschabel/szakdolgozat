@@ -2,18 +2,23 @@ package hu.szakdolgozat.megjelenites;
 
 import hu.szakdolgozat.szerver_kapcsolat.SzerverKapcsolat;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class BejelentkezoKepernyo extends Kepernyo implements ActionListener {
+    private final Ablak ablak;
+    private final int PORT = 52564;
+    private final String IP_ADDR = "127.0.0.1";
     private JButton csatlakozas;
     private JTextField felhasznalonevInput;
     private JPasswordField jelszoInput;
     private JLabel felhasznalonevLabel;
     private JLabel jelszoLabel;
-
-    private final Ablak ablak;
 
     public BejelentkezoKepernyo(int szelesseg, int magassag, Ablak ablak) {
         super(szelesseg, magassag);
@@ -49,15 +54,13 @@ public class BejelentkezoKepernyo extends Kepernyo implements ActionListener {
             SzerverKapcsolat kapcsolat = new SzerverKapcsolat();
             String felhasznalonev = felhasznalonevInput.getText();
             String jelszo = new String(jelszoInput.getPassword()); // TODO: Encryption
-            if (felhasznalonev.length() > 0 && jelszo.length() > 0 && kapcsolat.csatlakozas("127.0.0.1", 52564, felhasznalonev, jelszo)) {
+            if (felhasznalonev.length() > 0 && jelszo.length() > 0 && kapcsolat.csatlakozas(IP_ADDR, PORT, felhasznalonev, jelszo)) {
                 System.out.println("Login Success");
                 kapcsolat.inputHallgatas();
-
                 ablak.jatekmenetMegjelenites(kapcsolat);
-
             } else {
                 JOptionPane.showMessageDialog(this, "Hibás bejelentkezési adatok!");
-                System.out.println("Login Failed") ;
+                System.out.println("Sikertelen bejelentkezés!") ;
             }
         }
     }

@@ -1,9 +1,12 @@
 package hu.szakdolgozat.dao;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class JatekosDao {
-    private Connection connection = AdatbazisCsatlakozas.getConnection();
+    private final Connection connection = AdatbazisCsatlakozas.getConnection();
 
     public JatekosDao() { }
 

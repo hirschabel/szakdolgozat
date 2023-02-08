@@ -4,37 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Jatekmenet implements Runnable {
-    private int[][] terkep;
-    private List<Csatlakozas> csatlakozasok;
-    private JatekosLista jatekosLista2;
-    private TerkepLista terkepLista;
-    private int[][] terkep3;
-
-    private List<Jatekos> jatekosok;
+    private final int[][] terkep;
+    private final List<Csatlakozas> csatlakozasok;
+    private final JatekosLista jatekosLista2;
+    private final TerkepLista terkepLista;
 
     public Jatekmenet(int[][] terkep, List<Csatlakozas> csatlakozasok, JatekosLista jatekosLista2, TerkepLista terkepLista) {
         this.terkep = terkep;
         this.csatlakozasok = csatlakozasok;
         this.jatekosLista2 = jatekosLista2;
         this.terkepLista = terkepLista;
-
-        terkep3 = new int[][] {
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-        };
     }
 
     @Override
     public void run() {
-        jatekosok = new ArrayList<>();
+        List<Jatekos> jatekosok = new ArrayList<>();
         for (Csatlakozas csatlakozas : csatlakozasok) {
             Jatekos currJatekos = csatlakozas.getJatekos();
             if (currJatekos != null) {
@@ -82,7 +66,7 @@ public class Jatekmenet implements Runnable {
         return pozicio;
     }
 
-    private boolean mozoghatOda(int x, int y) { // TODO valid határértékekkel + akadály kereséssel
-        return x >= 0 && y >= 0 && x < 100 && y < 100;
+    private boolean mozoghatOda(int sor, int oszlop) { // TODO akadály kereséssel
+        return sor >= 0 && oszlop >= 0 && sor < 100 && oszlop < 100;
     }
 }

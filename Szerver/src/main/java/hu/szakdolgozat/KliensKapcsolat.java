@@ -5,154 +5,110 @@ import hu.szakdolgozat.dao.JatekosDao;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
+import java.util.function.Function;
 
 public class KliensKapcsolat implements Runnable {
-    private Jatekos jatekos;
-
-    private int sor, oszlop;
-    private Socket kliens;
+    private final int HATAR_SOR = 9;
+    private final int HATAR_OSZLOP = 9;
+    private final Csatlakozas csatlakozas;
+    //private final String jatekosNev;
+    private final Function<Csatlakozas, Boolean> torles;
+    private final JatekosLista jatekosLista;
+    private final TerkepLista terkepLista;
     private ObjectOutputStream output;
     private ObjectInputStream input;
-    private String[] clientInput;
-    private boolean csatlakozva;
-    private Runnable jatekosSzamCsokkent;
+    private boolean connected;
 
-    private int[][] terkep;
+    public KliensKapcsolat(Csatlakozas csatlakozas, Function<Csatlakozas, Boolean> torles,
+                           JatekosLista jatekosLista, TerkepLista terkepLista) {
+        this.csatlakozas = csatlakozas;
+        //this.jatekosNev = "";
+        this.torles = torles;
+        this.jatekosLista = jatekosLista;
+        this.terkepLista = terkepLista;
 
-    public KliensKapcsolat(Socket kliens, Runnable jatekosSzamCsokkent) {
-        this.kliens = kliens;
-        this.jatekosSzamCsokkent = jatekosSzamCsokkent;
-        csatlakozva = false;
-        clientInput = new String[] { "null" };
-        sor = oszlop = 4;
-        terkep = new int[][] {
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-        };
-        terkep[sor][oszlop] = 1;
-
-
-        bejelentkezes();
-
-        new Thread(() -> {
-            try {
-                while (csatlakozva) {
-                    clientInput[0] = (String) input.readObject();
-                    log(clientInput[0], 3);
-                }
-            } catch (IOException | ClassNotFoundException e) {
-                stop(true);
-            }
-        }).start();
-    }
-
-    private void inputKezeles(String input) {
-        //System.out.println("input: " + input);
-        switch (input) {
-            case "W" -> mozgas(-1, 0);
-            case "D" -> mozgas(0, 1);
-            case "A" -> mozgas(0, -1);
-            case "S" -> mozgas(1, 0);
-            default -> {}
-        }
-    }
-
-    private void mozgas(int sorDiff, int oszlopDiff) {
-        if (mozoghatOda(sor + sorDiff, oszlop + oszlopDiff)) {
-            terkep[sor][oszlop] = 0;
-            sor = sor + sorDiff;
-            oszlop = oszlop + oszlopDiff;
-            terkep[sor][oszlop] = 1;
-        }
-    }
-
-    private boolean mozoghatOda(int x, int y) {
-        return x >= 0 && y >= 0 && x < 10 && y < 10;
-    }
-
-
-    private void bejelentkezes() {
         try {
-            input = new ObjectInputStream(kliens.getInputStream());
-            output = new ObjectOutputStream(kliens.getOutputStream());
+            input = new ObjectInputStream(csatlakozas.getKliens().getInputStream());
+            output = new ObjectOutputStream(csatlakozas.getKliens().getOutputStream());
 
-            String adatok = (String) input.readObject();
-            String[] felhasznalo = new String[]{adatok.split(";")[0], adatok.split(";")[1]};
-
+            String bejelentkezoAdatok = (String) input.readObject();
+            String[] felhasznalo = new String[]{
+                    bejelentkezoAdatok.split(";")[0],
+                    bejelentkezoAdatok.split(";")[1]
+            };
 
             if (new JatekosDao().jatekosLetezik(felhasznalo[0], felhasznalo[1])) {
-                jatekos = new Jatekos(felhasznalo[0], felhasznalo[1]);
-                log(jatekos.getName() + " csatlakozott!", 0);
-                csatlakozva = true;
+                csatlakozas.setJatekos(new Jatekos(felhasznalo[0], new Pozicio(4, 4))); // TODO random pozicioba kezdes
+                //this.jatekosNev = felhasznalo[0];
                 output.writeObject("Sikeres csatlakozas!");
-                return;
+                System.out.println("Sikeres csatlakozas"); // TODO játékos név
+                connected = true;
+            } else {
+                output.writeObject("Hibas adatok!");
+                input.close();
+                output.close();
+                csatlakozas.getKliens().close();
+                connected = false;
+                torles.apply(csatlakozas);
             }
-            output.writeObject("Hibas adatok!");
-            stop(false);
         } catch (SQLException | IOException | ClassNotFoundException e) {
-            stop(false);
+            connected = false;
+            torles.apply(csatlakozas);
         }
     }
 
     @Override
     public void run() {
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-        executor.scheduleAtFixedRate(() -> {
-            if (csatlakozva) {
-                try {
-                    inputKezeles(clientInput[0]);
-                    output.writeObject(terkep.clone());
-                    output.reset();
-                    clientInput[0] = "null";
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+        new Thread(() -> {
+            try {
+                while (connected) {
+                    csatlakozas.setUtasitas((String) input.readObject());
                 }
-            } else {
-                executor.shutdown();
+            } catch (IOException | ClassNotFoundException e) {
+                System.out.println("KILÉPETT");
+                connected = false;
+                torles.apply(csatlakozas);
             }
-        }, 0, 350, TimeUnit.MILLISECONDS);
-    }
+        }).start();
 
-    private void stop(boolean lecsatlakozas) {
-        try {
-            if (lecsatlakozas) {
-                log(jatekos.getName() + " lecsatlakozott!", 0);
-            } else {
-                log("Csatlakozas sikertelen!", 2);
+        while (connected) {
+            try {
+                int[][] kapottTerkep = terkepLista.receive();
+                List<Jatekos> jatekosok = jatekosLista.receive();
+
+                this.csatlakozas.setJatekos(jatekosok.get(jatekosok.indexOf(this.csatlakozas.getJatekos()))); //TODO better
+                int[][] kisTerkep = kisTerkepSzerzes(kapottTerkep);
+                for (Jatekos jatekos : jatekosok) {
+                    if (this.csatlakozas.getJatekos().getName().equals(jatekos.getName())) {
+                        this.csatlakozas.getJatekos().setPozicio(jatekos.getPozicio());
+                    }
+                }
+                output.writeObject(kisTerkep);
+                output.writeObject(new int[] {csatlakozas.getJatekos().getPozicio().getSorPozicio(),
+                    csatlakozas.getJatekos().getPozicio().getOszlopPozicio()});
+                output.reset();
+            } catch (IOException e) {
+                System.out.println("outputbol torolve");
+                connected = false;
+                torles.apply(csatlakozas);
             }
-            input.close();
-            output.close();
-            kliens.close();
-            csatlakozva = false;
-            jatekosSzamCsokkent.run();
-        } catch (IOException ignored) {
         }
     }
 
-    private void log(String szoveg, int csatorna) {
-        String csatornaSzoveg = switch (csatorna) {
-            case 0 -> "[LOG]";
-            case 1 -> "[SZERVER->" + jatekos.getName() + "]";
-            case 2 -> "[ERROR]";
-            case 3 -> "[SZERVER<-" + jatekos.getName() + "]";
-            default -> "[UNKNOWN]";
-        };
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
-        //System.out.println(dtf.format(LocalDateTime.now()) + " " + csatornaSzoveg + " " + szoveg);
+    private int[][] kisTerkepSzerzes(int[][] nagyTerkep) {
+        int[][] kisTerkep = new int[10][10];
+        Pozicio poz = csatlakozas.getJatekos().getPozicio();
+        for (int i = 0, sor = poz.getSorPozicio() - (HATAR_SOR / 2); i < HATAR_SOR; i++, sor++) {
+            for(int j = 0, oszlop = poz.getOszlopPozicio() - (HATAR_OSZLOP / 2); j < HATAR_OSZLOP; j++, oszlop++) {
+                if (sor < 0 || oszlop < 0 || sor >= 100 || oszlop >= 100) {
+                    kisTerkep[i][j] = -1;
+                    continue;
+                }
+                kisTerkep[i][j] = nagyTerkep[sor][oszlop];
+            }
+        }
+        return kisTerkep;
     }
 }

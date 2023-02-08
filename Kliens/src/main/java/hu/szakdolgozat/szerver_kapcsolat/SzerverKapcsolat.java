@@ -1,10 +1,9 @@
 package hu.szakdolgozat.szerver_kapcsolat;
 
-import hu.szakdolgozat.Pozicio;
-
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Arrays;
 
 public class SzerverKapcsolat {
     private int[][] terkep;
@@ -22,8 +21,6 @@ public class SzerverKapcsolat {
             in = new ObjectInputStream(szerver.getInputStream());
             bejelentkezes(felhasznaloNev, jelszo);
             csatlakozva = true;
-
-
             return true;
         } catch (ClassNotFoundException | IOException e) {
             return false;
@@ -34,13 +31,9 @@ public class SzerverKapcsolat {
         new Thread(() -> {
             try {
                 while (csatlakozva) {
-                    //int[][] tempTerkep = (int[][])in.readObject();
-                    //System.out.println("KLIENS:\t\t" + Arrays.deepToString(tempTerkep));
-                    //terkep = tempTerkep;
                     terkep = terkepOlvas();
                     int[] jatekosPoz = intOlvas();
                     System.out.println("Olvasva (" + jatekosPoz[0] + "," + jatekosPoz[1] + ")");
-                    //System.out.println("KLIENS:\t\t" + Arrays.deepToString(terkep));
                 }
             } catch (IOException | ClassNotFoundException e) {
                 lecsatlakozas();
@@ -54,10 +47,6 @@ public class SzerverKapcsolat {
 
     public int[] intOlvas() throws IOException, ClassNotFoundException {
         return (int[])in.readObject();
-    }
-
-    public Pozicio pozicioOlvas() throws IOException, ClassNotFoundException {
-        return (Pozicio)in.readObject();
     }
 
     private void bejelentkezes(String felhasznaloNev, String jelszo) throws IOException, ClassNotFoundException {
@@ -81,17 +70,15 @@ public class SzerverKapcsolat {
         return (String) in.readObject();
     }
 
-    public boolean lecsatlakozas() {
+    public void lecsatlakozas() {
         try {
             in.close();
             out.close();
             csatlakozva = false;
             szerver.close();
             //System.out.println("LECSATLAKOZVA");
-            return true;
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
         }
     }
 

@@ -6,7 +6,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class JatekmenetController implements KeyListener {
-    SzerverKapcsolat kapcsolat;
+    private final SzerverKapcsolat kapcsolat;
+
     public JatekmenetController(SzerverKapcsolat kapcsolat) {
         super();
         this.kapcsolat = kapcsolat;

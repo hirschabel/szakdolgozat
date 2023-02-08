@@ -11,7 +11,6 @@ public class JatekosLista {
         } catch (InterruptedException e) {
             e.printStackTrace();;
         }
-
         return jatekosok;
     }
 

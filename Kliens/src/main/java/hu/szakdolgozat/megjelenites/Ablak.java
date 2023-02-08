@@ -10,30 +10,23 @@ public class Ablak extends JFrame {
     private final int ABLAK_MAGASSAG = 800;
     private Kepernyo kepernyo;
 
-    private SzerverKapcsolat kapcsolat;
-
-
     public Ablak() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.getContentPane().setPreferredSize(new Dimension(ABLAK_SZELESSEG, ABLAK_MAGASSAG));
         this.setLayout(null);
         this.pack();
-
-
         this.setLocationRelativeTo(null);
+
         kepernyo = new BejelentkezoKepernyo(ABLAK_SZELESSEG, ABLAK_MAGASSAG, this);
         this.add(kepernyo);
     }
 
-
     public void jatekmenetMegjelenites(SzerverKapcsolat kapcsolat) {
         System.out.println("---jatekmenet megjelenites---");
-        this.kapcsolat = kapcsolat;
         megjelenit(new JatekmenetKepernyo(ABLAK_SZELESSEG, ABLAK_MAGASSAG, kapcsolat));
     }
 
-
-    public void bejelentkezesMegjelenites() {
+    public void bejelentkezesMegjelenites() { // TODO kilépés implementálása
 
         System.out.println("bejelentkezes megjelenites");
     }

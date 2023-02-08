@@ -1,6 +1,7 @@
 package hu.szakdolgozat.megjelenites;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 public abstract class Kepernyo extends JPanel {
     protected final int ABLAK_SZELESSEG;

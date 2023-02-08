@@ -1,6 +1,6 @@
 package hu.szakdolgozat;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -12,10 +12,11 @@ import java.util.function.Function;
 
 public class Szerver {
     private final int SZERVER_PORT = 52564;
+    private final int TICK_MILLISECOND = 250;
     private ServerSocket szerver;
-    private List<Csatlakozas> csatlakozasok;
     private int[][] terkep;
-    private JatekosLista jatekosLista99;
+    private List<Csatlakozas> csatlakozasok;
+    private JatekosLista jatekosLista;
     private TerkepLista terkepLista;
 
     public Szerver() {
@@ -25,14 +26,12 @@ public class Szerver {
             terkep = new int[100][100];
             csatlakozasok = new ArrayList<>();
 
-            //Jatekmenet jatekmenet = new Jatekmenet(terkep, csatlakozasok);
-            jatekosLista99 = new JatekosLista();
+            jatekosLista = new JatekosLista();
             terkepLista = new TerkepLista();
-            Runnable jatekmenet = new Jatekmenet(terkep, csatlakozasok, jatekosLista99, terkepLista);
+            Runnable jatekmenet = new Jatekmenet(terkep, csatlakozasok, jatekosLista, terkepLista);
 
             ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-            executor.scheduleAtFixedRate(jatekmenet, 0, 250, TimeUnit.MILLISECONDS);
-
+            executor.scheduleAtFixedRate(jatekmenet, 0, TICK_MILLISECOND, TimeUnit.MILLISECONDS);
 
             csatlakozasFogadas();
         } catch (IOException e) {
@@ -43,10 +42,10 @@ public class Szerver {
     private void csatlakozasFogadas() throws IOException { // TODO: játékosszám maximum elérése után, ha lecsatlakozik valaki, akkor is fogadjon
         while (true) {
             Socket kliens = szerver.accept();
-            Csatlakozas csatlakozas = new Csatlakozas(null, kliens);
+            Csatlakozas csatlakozas = new Csatlakozas(kliens);
             csatlakozasok.add(csatlakozas);
 
-            new Thread(new TesztKliensKapcsolat(csatlakozas, deleteCsatlakozas, jatekosLista99, terkepLista)).start();
+            new Thread(new KliensKapcsolat(csatlakozas, deleteCsatlakozas, jatekosLista, terkepLista)).start();
         }
     }
 
