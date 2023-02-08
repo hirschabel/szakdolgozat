@@ -12,12 +12,11 @@ import java.util.function.Function;
 
 public class Szerver {
     private final int SZERVER_PORT = 52564;
-    private final int TICK_MILLISECOND = 250;
+    private final int TICK_MILLISECOND = 300;
     private ServerSocket szerver;
     private int[][] terkep;
     private List<Csatlakozas> csatlakozasok;
-    private JatekosLista jatekosLista;
-    private TerkepLista terkepLista;
+    private JatekAdatLista jatekAdatLista;
 
     public Szerver() {
         System.out.println("---Szerver---");
@@ -25,10 +24,8 @@ public class Szerver {
             szerver = new ServerSocket(SZERVER_PORT);
             terkep = new int[100][100];
             csatlakozasok = new ArrayList<>();
-
-            jatekosLista = new JatekosLista();
-            terkepLista = new TerkepLista();
-            Runnable jatekmenet = new Jatekmenet(terkep, csatlakozasok, jatekosLista, terkepLista);
+            jatekAdatLista = new JatekAdatLista();
+            Runnable jatekmenet = new Jatekmenet(terkep, csatlakozasok, jatekAdatLista);
 
             ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
             executor.scheduleAtFixedRate(jatekmenet, 0, TICK_MILLISECOND, TimeUnit.MILLISECONDS);
@@ -45,7 +42,7 @@ public class Szerver {
             Csatlakozas csatlakozas = new Csatlakozas(kliens);
             csatlakozasok.add(csatlakozas);
 
-            new Thread(new KliensKapcsolat(csatlakozas, deleteCsatlakozas, jatekosLista, terkepLista)).start();
+            new Thread(new KliensKapcsolat(csatlakozas, deleteCsatlakozas, jatekAdatLista)).start();
         }
     }
 
