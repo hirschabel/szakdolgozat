@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.sql.SQLException;
-import java.util.function.Function;
 
 public class KliensKapcsolat implements Runnable {
     private final int HATAR_SOR = 9;
@@ -100,8 +99,15 @@ public class KliensKapcsolat implements Runnable {
     private int[][] kisTerkepSzerzes(int[][] nagyTerkep) {
         int[][] kisTerkep = new int[10][10];
         Pozicio poz = csatlakozas.getJatekos().getPozicio();
-        for (int i = 0, sor = poz.getSorPozicio() - (HATAR_SOR / 2); i < HATAR_SOR; i++, sor++) {
-            for(int j = 0, oszlop = poz.getOszlopPozicio() - (HATAR_OSZLOP / 2); j < HATAR_OSZLOP; j++, oszlop++) {
+
+        int jatekosSor = poz.getSorPozicio();
+        int jatekosOszl = poz.getOszlopPozicio();
+
+        int startSor = jatekosSor - (HATAR_SOR / 2);
+        int startOszl = jatekosOszl - (HATAR_OSZLOP / 2);
+
+        for (int i = 0, sor = startSor; i < HATAR_SOR; i++, sor++) {
+            for(int j = 0, oszlop = startOszl; j < HATAR_OSZLOP; j++, oszlop++) {
                 if (sor >= 0 && oszlop >= 0 && sor < 100 && oszlop < 100) {
                     kisTerkep[i][j] = nagyTerkep[sor][oszlop];
                 }

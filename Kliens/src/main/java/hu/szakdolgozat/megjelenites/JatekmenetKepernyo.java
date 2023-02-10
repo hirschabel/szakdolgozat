@@ -32,7 +32,7 @@ public class JatekmenetKepernyo extends Kepernyo {
             return;
         }
 
-        for (int sor = 0; sor < HATAR_SOR; sor++) {
+        for (int sor = 0; sor < HATAR_SOR; sor++) { // TODO: enum
             for (int oszlop = 0; oszlop < HATAR_OSZLOP; oszlop++) {
                 if (terkep[sor][oszlop] == 1) {
                     g.setColor(Color.LIGHT_GRAY);
@@ -42,6 +42,12 @@ public class JatekmenetKepernyo extends Kepernyo {
                     g.setColor(Color.RED);
                 } else if (terkep[sor][oszlop] == 0) {
                     g.setColor(Color.magenta);
+                } else if (terkep[sor][oszlop] == 4) { // BOT
+                    g.setColor(Color.PINK);
+                } else if (terkep[sor][oszlop] == 5) { // LEVEL
+                    g.setColor(Color.GREEN);
+                } else if (terkep[sor][oszlop] == 6) { // UVEG
+                    g.setColor(Color.white);
                 }
 
                 int hossz = this.ABLAK_MAGASSAG / 10;

@@ -6,12 +6,13 @@ import lombok.Data;
 public class Jatekos {
     private int id;
     private String name;
-    private String password;
     private Pozicio pozicio;
+    private Inventory eszkoztar;
 
-    public Jatekos(String name, String password) {
+    public Jatekos(int id, String name, Pozicio pozicio) { //TODO: id alapján való azonosítás (-> eszköztár lekérdezéshez)
+        this.id = id;
         this.name = name;
-        this.password = password;
+        this.pozicio = pozicio;
     }
 
     public Jatekos(String name, Pozicio pozicio) {
