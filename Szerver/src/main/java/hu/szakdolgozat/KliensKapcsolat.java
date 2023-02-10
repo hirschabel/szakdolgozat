@@ -11,19 +11,19 @@ import java.util.function.Function;
 public class KliensKapcsolat implements Runnable {
     private final int HATAR_SOR = 9;
     private final int HATAR_OSZLOP = 9;
+    private final Szerver szerver;
     private final Csatlakozas csatlakozas;
-    private final Function<Csatlakozas, Boolean> torles;
     private String jatekosNev;
     private ObjectOutputStream output;
     private ObjectInputStream input;
     private boolean connected;
     private final JatekAdatLista jatekAdatLista;
 
-    public KliensKapcsolat(Csatlakozas csatlakozas, Function<Csatlakozas, Boolean> torles,
-                           JatekAdatLista jatekAdatLista) {
+    public KliensKapcsolat(Szerver szerver, Csatlakozas csatlakozas,
+                           JatekAdatLista jatekAdatLista) throws IOException {
         this.csatlakozas = csatlakozas;
-        this.torles = torles;
         this.jatekAdatLista = jatekAdatLista;
+        this.szerver = szerver;
 
         try {
             input = new ObjectInputStream(csatlakozas.getKliens().getInputStream());
@@ -47,11 +47,11 @@ public class KliensKapcsolat implements Runnable {
                 output.close();
                 csatlakozas.getKliens().close();
                 connected = false;
-                torles.apply(csatlakozas);
+                szerver.deleteCsatlakozas(csatlakozas);
             }
         } catch (SQLException | IOException | ClassNotFoundException e) {
             connected = false;
-            torles.apply(csatlakozas);
+            szerver.deleteCsatlakozas(csatlakozas);
         }
     }
 
@@ -66,7 +66,7 @@ public class KliensKapcsolat implements Runnable {
             } catch (IOException | ClassNotFoundException e) {
                 System.out.println("KILÉPETT");
                 connected = false;
-                torles.apply(csatlakozas);
+                szerver.deleteCsatlakozas(csatlakozas);
             }
         }).start();
 
@@ -92,7 +92,7 @@ public class KliensKapcsolat implements Runnable {
             } catch (IOException e) {
                 System.out.println("outputbol torolve");
                 connected = false;
-                torles.apply(csatlakozas);
+                szerver.deleteCsatlakozas(csatlakozas);
             }
         }
     }

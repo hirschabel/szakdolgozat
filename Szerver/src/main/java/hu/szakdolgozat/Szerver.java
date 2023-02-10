@@ -13,6 +13,8 @@ import java.util.function.Function;
 public class Szerver {
     private final int SZERVER_PORT = 52564;
     private final int TICK_MILLISECOND = 300;
+    private final int MAX_JATEKOS_SZAM = 10;
+    private int jatekosSzam;
     private ServerSocket szerver;
     private int[][] terkep;
     private List<Csatlakozas> csatlakozasok;
@@ -36,17 +38,25 @@ public class Szerver {
         }
     }
 
-    private void csatlakozasFogadas() throws IOException { // TODO: játékosszám maximum elérése után, ha lecsatlakozik valaki, akkor is fogadjon
-        while (true) {
-            Socket kliens = szerver.accept();
-            Csatlakozas csatlakozas = new Csatlakozas(kliens);
-            csatlakozasok.add(csatlakozas);
-
-            new Thread(new KliensKapcsolat(csatlakozas, deleteCsatlakozas, jatekAdatLista)).start();
+    private void csatlakozasFogadas() { // TODO: játékosszám maximum elérése után, ha lecsatlakozik valaki, akkor is fogadjon
+        while (jatekosSzam < MAX_JATEKOS_SZAM) {
+            try {
+                Socket kliens = szerver.accept();
+                Csatlakozas csatlakozas = new Csatlakozas(kliens);
+                csatlakozasok.add(csatlakozas);
+                jatekosSzam++;
+                new Thread(new KliensKapcsolat(this, csatlakozas, jatekAdatLista)).start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    Function <Csatlakozas, Boolean> deleteCsatlakozas = e -> csatlakozasok.remove(e);
+    public void deleteCsatlakozas(Csatlakozas csatlakozas) {
+        jatekosSzam--;
+        csatlakozasok.remove(csatlakozas);
+        csatlakozasFogadas();
+    }
 
     public static void main(String[] args) {
         new Szerver();
