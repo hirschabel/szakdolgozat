@@ -60,7 +60,6 @@ public class KliensKapcsolat implements Runnable {
             try {
                 while (connected) {
                     csatlakozas.setUtasitas((String) input.readObject());
-                    System.out.println(csatlakozas.getUtasitas());
                 }
             } catch (IOException | ClassNotFoundException e) {
                 System.out.println("KILÉPETT");
@@ -87,6 +86,11 @@ public class KliensKapcsolat implements Runnable {
                 output.writeObject(kisTerkep);
                 output.writeObject(new int[] {csatJatekos.getPozicio().getSorPozicio(),
                         csatJatekos.getPozicio().getOszlopPozicio()});
+                output.writeObject(new int[] {
+                        csatJatekos.getEszkoztar().getBotSzam(),
+                        csatJatekos.getEszkoztar().getLevelSzam(),
+                        csatJatekos.getEszkoztar().getUvegSzam()
+                });
                 output.reset();
             } catch (IOException e) {
                 System.out.println("outputbol torolve");

@@ -18,6 +18,7 @@ public class Jatekos {
     public Jatekos(String name, Pozicio pozicio) {
         this.name = name;
         this.pozicio = pozicio;
+        this.eszkoztar = new Inventory(0, 0, 0);
     }
 
     public String toString() {

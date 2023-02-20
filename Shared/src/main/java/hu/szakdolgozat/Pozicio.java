@@ -43,4 +43,8 @@ public class Pozicio { //TODO szerializálhatóvá tenni, ha küldeni akarjuk wr
         }
         return new Pozicio(oldal - (sorPozicio - sor), oldal - (oszlopPozicio - oszlop));
     }
+
+    public boolean isMellette(Pozicio poz) {
+        return Math.abs(poz.getSorPozicio() - sorPozicio) <= 1 && Math.abs(poz.getOszlopPozicio() - oszlopPozicio) <= 1;
+    }
 }

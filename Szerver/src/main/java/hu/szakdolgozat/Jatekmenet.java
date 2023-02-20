@@ -91,7 +91,15 @@ public class Jatekmenet implements Runnable {
     }
 
     private void targyFelvetel(List<Jatekos> jatekosok) {
-
+        targyak.removeIf(p -> {
+            for (Jatekos jatekos : jatekosok) {
+                if (jatekos.getPozicio().isMellette(p.getPozicio())) {
+                    jatekos.getEszkoztar().addTargy(p.getId());
+                    return true;
+                }
+            }
+            return false;
+        });
     }
 
     private void terkepFrissites() {
