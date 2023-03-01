@@ -1,6 +1,6 @@
 package hu.szakdolgozat.szerver_kapcsolat;
 
-import hu.szakdolgozat.Inventory;
+import hu.szakdolgozat.Eszkoztar;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -9,7 +9,7 @@ import java.net.Socket;
 
 public class SzerverKapcsolat {
     private int[][] terkep;
-    private Inventory eszkoztar;
+    private Eszkoztar eszkoztar;
     private Socket szerver;
     private ObjectOutputStream out;
     private ObjectInputStream in;
@@ -22,7 +22,7 @@ public class SzerverKapcsolat {
             out = new ObjectOutputStream(szerver.getOutputStream());
             in = new ObjectInputStream(szerver.getInputStream());
             bejelentkezes(felhasznaloNev, jelszo);
-            eszkoztar = new Inventory(0, 0, 0);
+            eszkoztar = new Eszkoztar(0, 0, 0);
             csatlakozva = true;
             return true;
         } catch (ClassNotFoundException | IOException e) {
@@ -38,7 +38,7 @@ public class SzerverKapcsolat {
                     int[] jatekosPoz = intOlvas();
                     int[] alapanyagok = intOlvas();
                     eszkoztar.setTargyak(alapanyagok[0], alapanyagok[1], alapanyagok[2]);
-                    System.out.println("Olvasva (" + jatekosPoz[0] + "," + jatekosPoz[1] + ")");
+                    System.out.println("Pozíció (" + jatekosPoz[0] + "," + jatekosPoz[1] + ")");
                 }
             } catch (IOException | ClassNotFoundException e) {
                 lecsatlakozas();
@@ -47,11 +47,11 @@ public class SzerverKapcsolat {
     }
 
     public int[][] terkepOlvas() throws IOException, ClassNotFoundException {
-        return (int[][])in.readObject();
+        return (int[][]) in.readObject();
     }
 
     public int[] intOlvas() throws IOException, ClassNotFoundException {
-        return (int[])in.readObject();
+        return (int[]) in.readObject();
     }
 
     private void bejelentkezes(String felhasznaloNev, String jelszo) throws IOException, ClassNotFoundException {
@@ -87,11 +87,11 @@ public class SzerverKapcsolat {
         }
     }
 
-    public int[][] getTerkep()  {
+    public int[][] getTerkep() {
         return terkep;
     }
 
-    public Inventory getEszkoztar() {
+    public Eszkoztar getEszkoztar() {
         return eszkoztar;
     }
 }

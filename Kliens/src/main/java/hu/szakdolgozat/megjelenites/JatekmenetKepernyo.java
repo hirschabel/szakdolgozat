@@ -1,18 +1,18 @@
 package hu.szakdolgozat.megjelenites;
 
-import hu.szakdolgozat.Inventory;
+import hu.szakdolgozat.Eszkoztar;
+import hu.szakdolgozat.Kepek;
 import hu.szakdolgozat.controller.JatekmenetController;
 import hu.szakdolgozat.szerver_kapcsolat.SzerverKapcsolat;
 
-import javax.swing.JLabel;
-import java.awt.Color;
-import java.awt.Graphics;
+import javax.swing.*;
+import java.awt.*;
 
 public class JatekmenetKepernyo extends Kepernyo {
     private final int HATAR_SOR = 9;
     private final int HATAR_OSZLOP = 9;
     private int[][] terkep;
-    private Inventory eszkoztar;
+    private Eszkoztar eszkoztar;
 
     private JLabel botSzamlalo;
     private JLabel levelSzamlalo;
@@ -45,26 +45,32 @@ public class JatekmenetKepernyo extends Kepernyo {
 
         for (int sor = 0; sor < HATAR_SOR; sor++) { // TODO: enum
             for (int oszlop = 0; oszlop < HATAR_OSZLOP; oszlop++) {
-                if (terkep[sor][oszlop] == 1) { // TERKEP MEZO
-                    g.setColor(Color.LIGHT_GRAY);
-                } else if (terkep[sor][oszlop] == 3) { // SAJAT JATEKOS
-                    g.setColor(Color.BLUE);
-                } else if (terkep[sor][oszlop] == 2) { // MASIK JATEKOS
-                    g.setColor(Color.RED);
-                } else if (terkep[sor][oszlop] == 0) { // TERKEP KIVULI TERULET
-                    g.setColor(Color.magenta);
-                } else if (terkep[sor][oszlop] == 4) { // BOT
-                    g.setColor(Color.PINK);
-                } else if (terkep[sor][oszlop] == 5) { // LEVEL
-                    g.setColor(Color.GREEN);
-                } else if (terkep[sor][oszlop] == 6) { // UVEG
-                    g.setColor(Color.white);
-                }
+                int[] templates = new int[]{
+                        0x00000001, // térkép mező
+                        0x00001000, // bot
+                        0x00010000, // levél
+                        0x00100000, // üveg
+                        0x01000000, // hajó
+                        0x00000100, // másik játékos
+                        0x00000010, // saját tátékos
+                        0x10000000  // terkepen kivul
+                };
 
                 int hossz = this.ABLAK_MAGASSAG / 10;
                 int x = hossz * oszlop;
                 int y = hossz * sor;
-                g.fillRect(x, y, hossz, hossz);
+
+                boolean terkepenKivul = true;
+                for (int template : templates) {
+                    int rajzolando = terkep[sor][oszlop] & template;
+                    if (rajzolando != 0x00000000) {
+                        terkepenKivul = false;
+                        g.drawImage(Kepek.findImage(rajzolando), x, y, hossz, hossz, null);
+                    }
+                }
+                if (terkepenKivul) {
+                    g.drawImage(Kepek.findImage(0x10000000), x, y, hossz, hossz, null);
+                }
             }
         }
     }

@@ -27,7 +27,7 @@ public class Jatekmenet implements Runnable {
     @Override
     public void run() {
         for (int[] sor : terkep) {
-            Arrays.fill(sor, 1);
+            Arrays.fill(sor, 0x00000001); //
         }
         if (lepes % 3 == 0) {
             // 1. Tárgy léptetés (törlés, ami kiesik)
@@ -93,7 +93,7 @@ public class Jatekmenet implements Runnable {
     private void targyFelvetel(List<Jatekos> jatekosok) {
         targyak.removeIf(p -> {
             for (Jatekos jatekos : jatekosok) {
-                if (jatekos.getPozicio().isMellette(p.getPozicio())) {
+                if (jatekos.getPozicio().isRajta(p.getPozicio())) {
                     jatekos.getEszkoztar().addTargy(p.getId());
                     return true;
                 }
@@ -104,10 +104,23 @@ public class Jatekmenet implements Runnable {
 
     private void terkepFrissites() {
         for (Targy targy : targyak) {
-            terkep[targy.getPozicio().getSorPozicio()][targy.getPozicio().getOszlopPozicio()] = targy.getId();
+            terkep[targy.getPozicio().getSorPozicio()][targy.getPozicio().getOszlopPozicio()] |= targy.getId();
         }
     }
 
+    /***
+     * Lehetséges inputok
+     *  - W: Mozgás egy mezővel fentebb
+     *  - D: Mozgás egy mezővel jobbra
+     *  - A: Mozgás egy mezővel balra
+     *  - S: Mozgás egy mezővel lentebb
+     *  - Nyíl le: Hajó mozgatása egy mezővel fentebb
+     *  - Nyíl jobbra: Hajó mozgatása egy mezővel jobbra
+     *  - Nyíl balra: Hajó mozgatása egy mezővel balra
+     *  - Nyíl le: Hajó mozgatása egy mezővel lentebb
+     * @param irany A játékostól kapott mozgás input
+     * @param pozicio A mozgatandó pozíció
+     */
     private void inputKezeles(String irany, Pozicio pozicio) {
         int sorDiff = 0;
         int oszlDiff = 0;
@@ -116,6 +129,7 @@ public class Jatekmenet implements Runnable {
             case "D" -> oszlDiff = 1;
             case "A" -> oszlDiff = -1;
             case "S" -> sorDiff = 1;
+            // TODO hajó mozgás
         }
         pozicio.mozgasRelativ(sorDiff, oszlDiff);
     }

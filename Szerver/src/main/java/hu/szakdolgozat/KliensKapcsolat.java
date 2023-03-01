@@ -71,26 +71,35 @@ public class KliensKapcsolat implements Runnable {
         while (connected) {
             try {
                 JatekAdat jatekAdat = jatekAdatLista.receive();
-                int[][] kisTerkep = kisTerkepSzerzes(jatekAdat.getTerkep());
-                Jatekos csatJatekos = csatlakozas.getJatekos();
-
+                int[][] teljesTerkep = jatekAdat.getTerkep();
                 for (Jatekos jatekos : jatekAdat.getJatekosok()) {
-                 if (!jatekosNev.equals(jatekos.getName())) {
-                     Pozicio poz = csatJatekos.getPozicio().getRelativePoz(jatekos.getPozicio(), HATAR_SOR);
-                     if (poz != null) {
-                         kisTerkep[poz.getSorPozicio()][poz.getOszlopPozicio()] = 3;
-                     }
-                 }
+                    Pozicio jatekosPoz = jatekos.getPozicio();
+                    Pozicio hajoPoz = jatekos.getHajo().getPozicio();
+                    if (hajoPoz != null) {
+                        teljesTerkep[hajoPoz.getSorPozicio()][hajoPoz.getOszlopPozicio()] |= 0x01000000;
+                        teljesTerkep[hajoPoz.getSorPozicio() + 1][hajoPoz.getOszlopPozicio()] |= 0x01000000;
+                        teljesTerkep[hajoPoz.getSorPozicio()][hajoPoz.getOszlopPozicio() + 1] |= 0x01000000;
+                        teljesTerkep[hajoPoz.getSorPozicio() + 1][hajoPoz.getOszlopPozicio() + 1] |= 0x01000000;
+                    }
+                    if (!jatekosNev.equals(jatekos.getName())) {
+                        teljesTerkep[jatekosPoz.getSorPozicio()][jatekosPoz.getOszlopPozicio()] |= 0x00000010;
+                    }
                 }
 
+                int[][] kisTerkep = kisTerkepSzerzes(teljesTerkep);
                 output.writeObject(kisTerkep);
-                output.writeObject(new int[] {csatJatekos.getPozicio().getSorPozicio(),
+
+                // OPTIONAL
+                Jatekos csatJatekos = csatlakozas.getJatekos();
+                output.writeObject(new int[]{csatJatekos.getPozicio().getSorPozicio(),
                         csatJatekos.getPozicio().getOszlopPozicio()});
-                output.writeObject(new int[] {
+                output.writeObject(new int[]{
                         csatJatekos.getEszkoztar().getBotSzam(),
                         csatJatekos.getEszkoztar().getLevelSzam(),
                         csatJatekos.getEszkoztar().getUvegSzam()
                 });
+                // END OPTIONAL
+
                 output.reset();
             } catch (IOException e) {
                 System.out.println("outputbol torolve");
@@ -111,13 +120,13 @@ public class KliensKapcsolat implements Runnable {
         int startOszl = jatekosOszl - (HATAR_OSZLOP / 2);
 
         for (int i = 0, sor = startSor; i < HATAR_SOR; i++, sor++) {
-            for(int j = 0, oszlop = startOszl; j < HATAR_OSZLOP; j++, oszlop++) {
+            for (int j = 0, oszlop = startOszl; j < HATAR_OSZLOP; j++, oszlop++) {
                 if (sor >= 0 && oszlop >= 0 && sor < 100 && oszlop < 100) {
                     kisTerkep[i][j] = nagyTerkep[sor][oszlop];
                 }
             }
         }
-        kisTerkep[HATAR_SOR / 2][HATAR_OSZLOP / 2] = 2;
+        kisTerkep[HATAR_SOR / 2][HATAR_OSZLOP / 2] |= 0x00000010; // saját játékos
         return kisTerkep;
     }
 }
