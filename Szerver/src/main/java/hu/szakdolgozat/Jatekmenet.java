@@ -84,7 +84,7 @@ public class Jatekmenet implements Runnable {
             Jatekos currJatekos = csatlakozas.getJatekos();
             if (currJatekos != null) {
                 jatekosok.add(currJatekos);
-                inputKezeles(csatlakozas.getUtasitas(), currJatekos.getPozicio());
+                inputKezeles(csatlakozas.getUtasitas(), currJatekos);
             }
             csatlakozas.setUtasitas("null");
         }
@@ -114,23 +114,32 @@ public class Jatekmenet implements Runnable {
      *  - D: Mozgás egy mezővel jobbra
      *  - A: Mozgás egy mezővel balra
      *  - S: Mozgás egy mezővel lentebb
-     *  - Nyíl le: Hajó mozgatása egy mezővel fentebb
-     *  - Nyíl jobbra: Hajó mozgatása egy mezővel jobbra
-     *  - Nyíl balra: Hajó mozgatása egy mezővel balra
-     *  - Nyíl le: Hajó mozgatása egy mezővel lentebb
+     *  - I: Hajó mozgatása egy mezővel fentebb
+     *  - L: Hajó mozgatása egy mezővel jobbra
+     *  - J: Hajó mozgatása egy mezővel balra
+     *  - K: Hajó mozgatása egy mezővel lentebb
      * @param irany A játékostól kapott mozgás input
-     * @param pozicio A mozgatandó pozíció
+     * @param jatekos A mozgó játékos
      */
-    private void inputKezeles(String irany, Pozicio pozicio) {
+    private void inputKezeles(String irany, Jatekos jatekos) {
+        Pozicio jatekosPoz = jatekos.getPozicio();
+        Pozicio hajoPoz = jatekos.getHajo().getPozicio();
         int sorDiff = 0;
         int oszlDiff = 0;
+        int hajoSorDiff = 0;
+        int hajoOszlDiff = 0;
         switch (irany) {
             case "W" -> sorDiff = -1;
             case "D" -> oszlDiff = 1;
-            case "A" -> oszlDiff = -1;
             case "S" -> sorDiff = 1;
+            case "A" -> oszlDiff = -1;
             // TODO hajó mozgás
+            case "I" -> hajoSorDiff = -1;
+            case "L" -> hajoOszlDiff = 1;
+            case "K" -> hajoSorDiff = 1;
+            case "J" -> hajoOszlDiff = -1;
         }
-        pozicio.mozgasRelativ(sorDiff, oszlDiff);
+        jatekosPoz.mozgasRelativ(sorDiff, oszlDiff);
+        hajoPoz.mozgasRelativ(hajoSorDiff, hajoOszlDiff);
     }
 }

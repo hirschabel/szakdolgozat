@@ -10,20 +10,19 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Szerver {
-    private final int SZERVER_PORT = 52564;
-    private final int TICK_MILLISECOND = 300;
-    private final int MAX_JATEKOS_SZAM = 10;
+    private static final int SZERVER_PORT = 52564;
+    private static final int TICK_MILLISECOND = 300;
+    private static final int MAX_JATEKOS_SZAM = 10;
     private int jatekosSzam;
     private ServerSocket szerver;
-    private int[][] terkep;
     private List<Csatlakozas> csatlakozasok;
     private JatekAdatLista jatekAdatLista;
 
     public Szerver() {
         System.out.println("---Szerver---");
-        try {
-            szerver = new ServerSocket(SZERVER_PORT);
-            terkep = new int[100][100];
+        try (ServerSocket serverSocket = new ServerSocket(SZERVER_PORT)) {
+            szerver = serverSocket;
+            int[][] terkep = new int[100][100]; // TODO: térképre betöltés (ha van)
             csatlakozasok = new ArrayList<>();
             jatekAdatLista = new JatekAdatLista();
             Runnable jatekmenet = new Jatekmenet(terkep, csatlakozasok, jatekAdatLista);
@@ -37,7 +36,7 @@ public class Szerver {
         }
     }
 
-    private void csatlakozasFogadas() { // TODO: játékosszám maximum elérése után, ha lecsatlakozik valaki, akkor is fogadjon
+    private void csatlakozasFogadas() {
         while (jatekosSzam < MAX_JATEKOS_SZAM) {
             try {
                 Socket kliens = szerver.accept();
@@ -61,5 +60,3 @@ public class Szerver {
         new Szerver();
     }
 }
-
-
