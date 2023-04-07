@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Random;
 
 public class Jatekmenet implements Runnable {
+    private static int lepes = 0;
     private final int[][] terkep;
     private final List<Csatlakozas> csatlakozasok;
     private final List<Targy> targyak;
     private final JatekAdatLista jatekAdatLista;
-    private int lepes;
 
     public Jatekmenet(int[][] terkep, List<Csatlakozas> csatlakozasok, JatekAdatLista jatekAdatLista) {
         this.csatlakozasok = csatlakozasok;
@@ -37,12 +37,11 @@ public class Jatekmenet implements Runnable {
             tagyGeneralas();
         }
 
-
-        // 3. Játékos input kezelés
+        // 3. Játékos input kezelés + erőforrás
         List<Jatekos> jatekosok = new ArrayList<>();
         jatekosInput(jatekosok);
 
-        // 4. Tárgy felvétel TODO:4
+        // 4. Tárgy felvétel
         targyFelvetel(jatekosok);
 
         // 5. Térkép frissítés
@@ -84,7 +83,19 @@ public class Jatekmenet implements Runnable {
             Jatekos currJatekos = csatlakozas.getJatekos();
             if (currJatekos != null) {
                 jatekosok.add(currJatekos);
+                if (lepes % 3 == 0) { // lehetne double?
+                    currJatekos.getEroforrasok().italCsokkentes();
+                } else if (lepes % 5 == 0) {
+                    currJatekos.getEroforrasok().etelCsokkentes();
+                }
+                currJatekos.getEroforrasok().isHalott(); // TODO: halál
+
                 inputKezeles(csatlakozas.getUtasitas(), currJatekos);
+
+                currJatekos.getHajo().szintlepes(currJatekos.getEszkoztar());
+                if (currJatekos.tudVisszatolteni() && currJatekos.getPozicio().isHajon(currJatekos.getHajo().getPozicio())) {
+                    currJatekos.visszatolt(); // ÉTEL / ITAL VISSZATÖLTÉS
+                }
             }
             csatlakozas.setUtasitas("null");
         }
@@ -93,7 +104,7 @@ public class Jatekmenet implements Runnable {
     private void targyFelvetel(List<Jatekos> jatekosok) {
         targyak.removeIf(p -> {
             for (Jatekos jatekos : jatekosok) {
-                if (jatekos.getPozicio().isRajta(p.getPozicio())) {
+                if (!jatekos.getPozicio().isHajon(jatekos.getHajo().getPozicio()) && jatekos.getPozicio().isRajta(p.getPozicio())) {
                     jatekos.getEszkoztar().addTargy(p.getId());
                     return true;
                 }
@@ -133,7 +144,6 @@ public class Jatekmenet implements Runnable {
             case "D" -> oszlDiff = 1;
             case "S" -> sorDiff = 1;
             case "A" -> oszlDiff = -1;
-            // TODO hajó mozgás
             case "I" -> hajoSorDiff = -1;
             case "L" -> hajoOszlDiff = 1;
             case "K" -> hajoSorDiff = 1;

@@ -2,8 +2,10 @@ package hu.szakdolgozat;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class Pozicio { //TODO szerializálhatóvá tenni, ha küldeni akarjuk writeObject-tel
+public class Pozicio implements Serializable {
     private int sorPozicio;
     private int oszlopPozicio;
 
@@ -30,21 +32,14 @@ public class Pozicio { //TODO szerializálhatóvá tenni, ha küldeni akarjuk wr
         return "(" + sorPozicio + "," + oszlopPozicio + ")";
     }
 
-    private boolean latja(int sor, int oszlop, int oldal) {
-        return sor >= sorPozicio - oldal && sor < sorPozicio + oldal && oszlop >= oszlopPozicio - oldal && oszlop < oszlopPozicio + oldal;
-    }
-
-    public Pozicio getRelativePoz(Pozicio pozicio, int negyzetOldal) {
-        int sor = pozicio.getSorPozicio();
-        int oszlop = pozicio.getOszlopPozicio();
-        int oldal = negyzetOldal / 2;
-        if (!latja(sor, oszlop, oldal)) {
-            return null;
-        }
-        return new Pozicio(oldal - (sorPozicio - sor), oldal - (oszlopPozicio - oszlop));
-    }
-
     public boolean isRajta(Pozicio poz) {
         return poz.getSorPozicio() == sorPozicio && poz.getOszlopPozicio() == oszlopPozicio;
+    }
+
+    public boolean isHajon(Pozicio hajoPoz) {
+        return (hajoPoz.getSorPozicio() == sorPozicio && hajoPoz.getOszlopPozicio() == oszlopPozicio
+                || hajoPoz.getSorPozicio() - 1 == sorPozicio && hajoPoz.getOszlopPozicio() == oszlopPozicio
+                || hajoPoz.getSorPozicio() == sorPozicio && hajoPoz.getOszlopPozicio() + 1 == oszlopPozicio
+                || hajoPoz.getSorPozicio() - 1 == sorPozicio && hajoPoz.getOszlopPozicio() + 1 == oszlopPozicio);
     }
 }

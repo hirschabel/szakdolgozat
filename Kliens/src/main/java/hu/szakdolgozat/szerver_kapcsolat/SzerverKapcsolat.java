@@ -1,15 +1,24 @@
 package hu.szakdolgozat.szerver_kapcsolat;
 
+import hu.szakdolgozat.Adat;
 import hu.szakdolgozat.Eszkoztar;
+import lombok.Getter;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class SzerverKapcsolat {
+    @Getter
     private int[][] terkep;
+    @Getter
     private Eszkoztar eszkoztar;
+    @Getter
+    private int szint;
+    @Getter
+    private int[] szuksegesTargyak;
     private Socket szerver;
     private ObjectOutputStream out;
     private ObjectInputStream in;
@@ -34,11 +43,14 @@ public class SzerverKapcsolat {
         new Thread(() -> {
             try {
                 while (csatlakozva) {
-                    terkep = terkepOlvas();
-                    int[] jatekosPoz = intOlvas();
-                    int[] alapanyagok = intOlvas();
-                    eszkoztar.setTargyak(alapanyagok[0], alapanyagok[1], alapanyagok[2]);
-                    System.out.println("Pozíció (" + jatekosPoz[0] + "," + jatekosPoz[1] + ")");
+                    Adat adat = (Adat) in.readObject();
+                    terkep = adat.getTerkep();
+                    eszkoztar = adat.getEszkoztar();
+                    szint = adat.getSzint();
+                    szuksegesTargyak = adat.getTargySzintlepeshez();
+                    System.out.println("Erőforrások: " + adat.getEroforras().getElet() + " - " + adat.getEroforras().getItal() + " - " + adat.getEroforras().getEtel());
+                    System.out.println("Szint: " + adat.getSzint() + " - " + Arrays.toString(adat.getTargySzintlepeshez()));
+//                    System.out.println("Pozíció: " + adat.getPozicio());
                 }
             } catch (IOException | ClassNotFoundException e) {
                 lecsatlakozas();
@@ -85,13 +97,5 @@ public class SzerverKapcsolat {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public int[][] getTerkep() {
-        return terkep;
-    }
-
-    public Eszkoztar getEszkoztar() {
-        return eszkoztar;
     }
 }

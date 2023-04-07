@@ -1,11 +1,12 @@
 package hu.szakdolgozat;
 
-import hu.szakdolgozat.targyak.Targy;
 import lombok.Getter;
 import hu.szakdolgozat.targyak.*;
 
+import java.io.Serializable;
+
 @Getter
-public class Eszkoztar {
+public class Eszkoztar implements Serializable {
     private int botSzam;
     private int levelSzam;
     private int uvegSzam;
@@ -28,5 +29,15 @@ public class Eszkoztar {
         this.botSzam = botSzam;
         this.levelSzam = levelSzam;
         this.uvegSzam = uvegSzam;
+    }
+
+    public boolean targyCsokkentes(int[] csokkentes) {
+        if (this.levelSzam < csokkentes[0] || this.botSzam < csokkentes[1] || this.uvegSzam < csokkentes[2]) {
+            return false;
+        }
+        this.levelSzam -= csokkentes[0];
+        this.botSzam -= csokkentes[1];
+        this.uvegSzam -= csokkentes[2];
+        return true;
     }
 }

@@ -9,11 +9,14 @@ import javax.swing.*;
 import java.awt.*;
 
 public class JatekmenetKepernyo extends Kepernyo {
-    private final int HATAR_SOR = 9;
-    private final int HATAR_OSZLOP = 9;
+    private static final int HATAR_SOR = 9;
+    private static final int HATAR_OSZLOP = 9;
     private int[][] terkep;
     private Eszkoztar eszkoztar;
+    private int szint;
+    private int[] szuksegesTargyak;
 
+    private JLabel szintMegjelenito;
     private JLabel botSzamlalo;
     private JLabel levelSzamlalo;
     private JLabel uvegSzamlalo;
@@ -23,13 +26,15 @@ public class JatekmenetKepernyo extends Kepernyo {
         super(szelesseg, magassag);
         this.addKeyListener(new JatekmenetController(kapcsolat));
         komponensekLetrehozasa();
-        init(botSzamlalo, levelSzamlalo, uvegSzamlalo);
+        init(botSzamlalo, levelSzamlalo, uvegSzamlalo, szintMegjelenito);
         this.repaint();
 
         new Thread(() -> {
             while (true) {
                 terkep = kapcsolat.getTerkep();
                 eszkoztar = kapcsolat.getEszkoztar();
+                szint = kapcsolat.getSzint();
+                szuksegesTargyak = kapcsolat.getSzuksegesTargyak();
                 repaint();
             }
         }).start();
@@ -56,7 +61,7 @@ public class JatekmenetKepernyo extends Kepernyo {
                         0x10000000  // terkepen kivul
                 };
 
-                int hossz = this.ABLAK_MAGASSAG / 10;
+                int hossz = this.ABLAK_MAGASSAG / 9;
                 int x = hossz * oszlop;
                 int y = hossz * sor;
 
@@ -76,17 +81,20 @@ public class JatekmenetKepernyo extends Kepernyo {
     }
 
     private void updateLabels() {
-        botSzamlalo.setText("Bot: " + eszkoztar.getBotSzam());
-        levelSzamlalo.setText("Levél: " + eszkoztar.getLevelSzam());
-        uvegSzamlalo.setText("Üveg: " + eszkoztar.getUvegSzam());
+        levelSzamlalo.setText("Levél: " + eszkoztar.getLevelSzam() + " / " + szuksegesTargyak[0]);
+        botSzamlalo.setText("Bot: " + eszkoztar.getBotSzam() + " / " + szuksegesTargyak[1]);
+        uvegSzamlalo.setText("Üveg: " + eszkoztar.getUvegSzam() + " / " + szuksegesTargyak[2]);
+        szintMegjelenito.setText("SZINT: " + szint);
     }
 
     private void komponensekLetrehozasa() {
-        botSzamlalo = new JLabel("Bot: 0");
-        botSzamlalo.setBounds(10, 10, 100, 30);
         levelSzamlalo = new JLabel("Levél: 0");
-        levelSzamlalo.setBounds(10, 50, 100, 30);
+        levelSzamlalo.setBounds(10, 10, 100, 30);
+        botSzamlalo = new JLabel("Bot: 0");
+        botSzamlalo.setBounds(10, 50, 100, 30);
         uvegSzamlalo = new JLabel("Üveg: 0");
         uvegSzamlalo.setBounds(10, 90, 100, 30);
+        szintMegjelenito = new JLabel("SZINT: 0", SwingConstants.CENTER);
+        szintMegjelenito.setBounds(800 / 2 - 100, 10, 200, 30);
     }
 }

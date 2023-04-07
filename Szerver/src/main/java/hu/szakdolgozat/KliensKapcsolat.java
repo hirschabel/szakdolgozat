@@ -8,8 +8,8 @@ import java.io.ObjectOutputStream;
 import java.sql.SQLException;
 
 public class KliensKapcsolat implements Runnable {
-    private final int HATAR_SOR = 9;
-    private final int HATAR_OSZLOP = 9;
+    private static final int HATAR_SOR = 9;
+    private static final int HATAR_OSZLOP = 9;
     private final Szerver szerver;
     private final Csatlakozas csatlakozas;
     private String jatekosNev;
@@ -86,20 +86,11 @@ public class KliensKapcsolat implements Runnable {
                     }
                 }
 
-                int[][] kisTerkep = kisTerkepSzerzes(teljesTerkep);
-                output.writeObject(kisTerkep);
-
-                // OPTIONAL
                 Jatekos csatJatekos = csatlakozas.getJatekos();
-                output.writeObject(new int[]{csatJatekos.getPozicio().getSorPozicio(),
-                        csatJatekos.getPozicio().getOszlopPozicio()});
-                output.writeObject(new int[]{
-                        csatJatekos.getEszkoztar().getBotSzam(),
-                        csatJatekos.getEszkoztar().getLevelSzam(),
-                        csatJatekos.getEszkoztar().getUvegSzam()
-                });
-                // END OPTIONAL
+                Adat adat = new Adat(kisTerkepSzerzes(teljesTerkep), csatJatekos.getPozicio(), csatJatekos.getEszkoztar(), csatJatekos.getEroforrasok(),
+                        csatJatekos.getHajo().getSzint(), csatJatekos.getHajo().getSzintAdat().getSzuksegesTargyak());
 
+                output.writeObject(adat);
                 output.reset();
             } catch (IOException e) {
                 System.out.println("outputbol torolve");
