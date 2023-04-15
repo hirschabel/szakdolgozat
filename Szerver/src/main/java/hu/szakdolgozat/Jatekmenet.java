@@ -1,5 +1,6 @@
 package hu.szakdolgozat;
 
+import hu.szakdolgozat.dao.JatekosDao;
 import hu.szakdolgozat.targyak.Bot;
 import hu.szakdolgozat.targyak.Level;
 import hu.szakdolgozat.targyak.Targy;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Jatekmenet implements Runnable {
+    private static final int MENTES_GYAKORISAG_LEPESBEN = 20;
     private static int lepes = 0;
     private final int[][] terkep;
     private final List<Csatlakozas> csatlakozasok;
@@ -43,6 +45,11 @@ public class Jatekmenet implements Runnable {
 
         // 4. Tárgy felvétel
         targyFelvetel(jatekosok);
+
+        // Mentés
+        if (lepes % MENTES_GYAKORISAG_LEPESBEN == 0) {
+            new Thread(() -> new JatekosDao().jatekosokMentese(jatekosok)).start();
+        }
 
         // 5. Térkép frissítés
         terkepFrissites();

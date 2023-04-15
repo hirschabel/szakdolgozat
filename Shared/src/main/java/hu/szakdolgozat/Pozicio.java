@@ -1,9 +1,12 @@
 package hu.szakdolgozat;
 
+import jakarta.persistence.Embeddable;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Random;
 
+@Embeddable
 @Data
 public class Pozicio implements Serializable {
     private int sorPozicio;
@@ -12,6 +15,10 @@ public class Pozicio implements Serializable {
     public Pozicio(int sorPozicio, int oszlopPozicio) {
         this.sorPozicio = sorPozicio;
         this.oszlopPozicio = oszlopPozicio;
+    }
+
+    public Pozicio() {
+        randomizalas();
     }
 
     public void mozgasRelativ(int sorDiff, int oszlopDiff) {
@@ -41,5 +48,11 @@ public class Pozicio implements Serializable {
                 || hajoPoz.getSorPozicio() - 1 == sorPozicio && hajoPoz.getOszlopPozicio() == oszlopPozicio
                 || hajoPoz.getSorPozicio() == sorPozicio && hajoPoz.getOszlopPozicio() + 1 == oszlopPozicio
                 || hajoPoz.getSorPozicio() - 1 == sorPozicio && hajoPoz.getOszlopPozicio() + 1 == oszlopPozicio);
+    }
+
+    public void randomizalas() {
+        Random r = new Random();
+        this.sorPozicio = r.nextInt(100);
+        this.oszlopPozicio = r.nextInt(100);
     }
 }

@@ -1,11 +1,16 @@
 package hu.szakdolgozat.hajo;
 
-import lombok.AllArgsConstructor;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Entity
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor(force = true)
 public class SzintAdat {
+    @Id
+    private int id;
     private final int[] szuksegesTargyak;
     private final int italNoveles;
     private final int etelNoveles;

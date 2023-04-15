@@ -1,11 +1,15 @@
 package hu.szakdolgozat;
 
+import jakarta.persistence.Embeddable;
 import lombok.Getter;
 import hu.szakdolgozat.targyak.*;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+@Embeddable
 @Getter
+@NoArgsConstructor
 public class Eszkoztar implements Serializable {
     private int botSzam;
     private int levelSzam;

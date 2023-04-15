@@ -1,5 +1,6 @@
 package hu.szakdolgozat;
 
+import hu.szakdolgozat.dao.FelhasznaloDao;
 import hu.szakdolgozat.dao.JatekosDao;
 
 import java.io.IOException;
@@ -34,8 +35,8 @@ public class KliensKapcsolat implements Runnable {
                     bejelentkezoAdatok.split(";")[1]
             };
 
-            if (new JatekosDao().jatekosLetezik(felhasznalo[0], felhasznalo[1])) {
-                csatlakozas.setJatekos(new Jatekos(felhasznalo[0], new Pozicio(4, 4))); // TODO random pozicioba kezdes
+            if (new FelhasznaloDao().jatekosLetezik(felhasznalo[0], felhasznalo[1])) {
+                csatlakozas.setJatekos(new JatekosDao().getJatekos(felhasznalo[0]));
                 this.jatekosNev = felhasznalo[0];
                 output.writeObject("Sikeres csatlakozas!");
                 System.out.println("Sikeres csatlakozas");

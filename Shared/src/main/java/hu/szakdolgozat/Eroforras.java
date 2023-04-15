@@ -1,11 +1,15 @@
 package hu.szakdolgozat;
 
+import jakarta.persistence.Embeddable;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
 
+@Embeddable
 @Getter
+@NoArgsConstructor
 public class Eroforras implements Serializable {
     private int max_elet;
     private int max_ital;
