@@ -2,23 +2,25 @@ package hu.szakdolgozat;
 
 import jakarta.persistence.Embeddable;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Random;
 
 @Embeddable
 @Data
+@NoArgsConstructor
 public class Pozicio implements Serializable {
     private int sorPozicio;
     private int oszlopPozicio;
 
     public Pozicio(int sorPozicio, int oszlopPozicio) {
-        this.sorPozicio = sorPozicio;
-        this.oszlopPozicio = oszlopPozicio;
+        setPozicio(sorPozicio, oszlopPozicio);
     }
 
-    public Pozicio() {
-        randomizalas();
+    public void setPozicio(int sor, int oszlop) {
+        this.sorPozicio = Math.max(sor, 0);
+        this.oszlopPozicio = Math.max(oszlop, 0);
     }
 
     public void mozgasRelativ(int sorDiff, int oszlopDiff) {

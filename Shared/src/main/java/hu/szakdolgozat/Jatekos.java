@@ -48,4 +48,9 @@ public class Jatekos {
             this.eroforrasok.italVisszatoltes();
         }
     }
+
+    public void pozicioRandomizalas() {
+        this.pozicio.randomizalas();
+        this.hajo.getPozicio().setPozicio(pozicio.getSorPozicio(), pozicio.getOszlopPozicio());
+    }
 }

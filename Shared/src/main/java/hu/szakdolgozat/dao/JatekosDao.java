@@ -23,7 +23,7 @@ public class JatekosDao {
                 jatekos = new Jatekos(name, new Pozicio());
                 em.persist(jatekos);
             }
-//            jatekos.getPozicio().randomizalas(); // Játékos mindig véletlenszerű pozícióban kezd
+            jatekos.pozicioRandomizalas(); // Játékos mindig véletlenszerű pozícióban kezd
             em.getTransaction().commit();
         }
         return jatekos;
