@@ -2,6 +2,7 @@ package hu.szakdolgozat.megjelenites;
 
 import hu.szakdolgozat.Eszkoztar;
 import hu.szakdolgozat.Kepek;
+import hu.szakdolgozat.TerkepKod;
 import hu.szakdolgozat.controller.JatekmenetController;
 import hu.szakdolgozat.szerver_kapcsolat.SzerverKapcsolat;
 
@@ -51,14 +52,14 @@ public class JatekmenetKepernyo extends Kepernyo {
         for (int sor = 0; sor < HATAR_SOR; sor++) { // TODO: enum
             for (int oszlop = 0; oszlop < HATAR_OSZLOP; oszlop++) {
                 int[] templates = new int[]{
-                        0x00000001, // térkép mező
-                        0x00001000, // bot
-                        0x00010000, // levél
-                        0x00100000, // üveg
-                        0x01000000, // hajó
-                        0x00000100, // másik játékos
-                        0x00000010, // saját tátékos
-                        0x10000000  // terkepen kivul
+                        TerkepKod.TERKEP_MEZO, // térkép mező
+                        TerkepKod.BOT, // bot
+                        TerkepKod.LEVEL, // levél
+                        TerkepKod.UVEG, // üveg
+                        TerkepKod.HAJO, // hajó
+                        TerkepKod.CAPA,  // cápa
+                        TerkepKod.SAJAT_JATEKOS, // másik játékos
+                        TerkepKod.MASIK_JATEKOS // saját tátékos
                 };
 
                 int hossz = this.ABLAK_MAGASSAG / 9;
@@ -67,14 +68,13 @@ public class JatekmenetKepernyo extends Kepernyo {
 
                 boolean terkepenKivul = true;
                 for (int template : templates) {
-                    int rajzolando = terkep[sor][oszlop] & template;
-                    if (rajzolando != 0x00000000) {
+                    if ((terkep[sor][oszlop] & template) != 0x00000000) {
                         terkepenKivul = false;
-                        g.drawImage(Kepek.findImage(rajzolando), x, y, hossz, hossz, null);
+                        g.drawImage(Kepek.findImage(template), x, y, hossz, hossz, null);
                     }
                 }
                 if (terkepenKivul) {
-                    g.drawImage(Kepek.findImage(0x10000000), x, y, hossz, hossz, null);
+                    g.drawImage(Kepek.TERKEPEN_KIVUL, x, y, hossz, hossz, null);
                 }
             }
         }

@@ -29,7 +29,7 @@ public class Jatekmenet implements Runnable {
     @Override
     public void run() {
         for (int[] sor : terkep) {
-            Arrays.fill(sor, 0x00000001); //
+            Arrays.fill(sor, TerkepKod.TERKEP_MEZO);
         }
         if (lepes % 3 == 0) {
             // 1. Tárgy léptetés (törlés, ami kiesik)

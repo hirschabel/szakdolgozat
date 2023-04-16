@@ -77,13 +77,13 @@ public class KliensKapcsolat implements Runnable {
                     Pozicio jatekosPoz = jatekos.getPozicio();
                     Pozicio hajoPoz = jatekos.getHajo().getPozicio();
                     if (hajoPoz != null) {
-                        teljesTerkep[hajoPoz.getSorPozicio()][hajoPoz.getOszlopPozicio()] |= 0x01000000;
-                        teljesTerkep[hajoPoz.getSorPozicio() + 1][hajoPoz.getOszlopPozicio()] |= 0x01000000;
-                        teljesTerkep[hajoPoz.getSorPozicio()][hajoPoz.getOszlopPozicio() + 1] |= 0x01000000;
-                        teljesTerkep[hajoPoz.getSorPozicio() + 1][hajoPoz.getOszlopPozicio() + 1] |= 0x01000000;
+                        teljesTerkep[hajoPoz.getSorPozicio()][hajoPoz.getOszlopPozicio()] |= TerkepKod.HAJO;
+                        teljesTerkep[hajoPoz.getSorPozicio() + 1][hajoPoz.getOszlopPozicio()] |= TerkepKod.HAJO;
+                        teljesTerkep[hajoPoz.getSorPozicio()][hajoPoz.getOszlopPozicio() + 1] |= TerkepKod.HAJO;
+                        teljesTerkep[hajoPoz.getSorPozicio() + 1][hajoPoz.getOszlopPozicio() + 1] |= TerkepKod.HAJO;
                     }
                     if (!jatekosNev.equals(jatekos.getName())) {
-                        teljesTerkep[jatekosPoz.getSorPozicio()][jatekosPoz.getOszlopPozicio()] |= 0x00000010;
+                        teljesTerkep[jatekosPoz.getSorPozicio()][jatekosPoz.getOszlopPozicio()] |= TerkepKod.MASIK_JATEKOS;
                     }
                 }
 
