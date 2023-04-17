@@ -2,28 +2,35 @@ package hu.szakdolgozat;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Map;
 
 public class Kepek {
-    public static Image terkepMezo = new ImageIcon("./Shared/src/main/resources/images/Viz.png").getImage();
-    public static Image bot = new ImageIcon("./Shared/src/main/resources/images/Bot.png").getImage();
-    public static Image level = new ImageIcon("./Shared/src/main/resources/images/Level.png").getImage();
-    public static Image uveg = new ImageIcon("./Shared/src/main/resources/images/Uveg.png").getImage();
-    public static Image hajo = new ImageIcon("./Shared/src/main/resources/images/Hajo.png").getImage();
-    public static Image masikJatekos = new ImageIcon("./Shared/src/main/resources/images/MasikJatekos.png").getImage();
-    public static Image sajatJatekos = new ImageIcon("./Shared/src/main/resources/images/SajatJatekos.png").getImage();
-    public static Image terkepenKivul = new ImageIcon("./Shared/src/main/resources/images/TerkepenKivul.png").getImage();
+    public static final Image TERKEP_MEZO = new ImageIcon("./Shared/src/main/resources/images/Viz.png").getImage();
+    public static final Image BOT = new ImageIcon("./Shared/src/main/resources/images/Bot.png").getImage();
+    public static final Image LEVEL = new ImageIcon("./Shared/src/main/resources/images/Level.png").getImage();
+    public static final Image UVEG = new ImageIcon("./Shared/src/main/resources/images/Uveg.png").getImage();
+    public static final Image HAJO = new ImageIcon("./Shared/src/main/resources/images/Hajo.png").getImage();
+    public static final Image MASIK_JATEKOS = new ImageIcon("./Shared/src/main/resources/images/MasikJatekos.png").getImage();
+    public static final Image SAJAT_JATEKOS = new ImageIcon("./Shared/src/main/resources/images/SajatJatekos.png").getImage();
+    public static final Image TERKEPEN_KIVUL = new ImageIcon("./Shared/src/main/resources/images/TerkepenKivul.png").getImage();
+    public static final Image CAPA = new ImageIcon("./Shared/src/main/resources/images/Capa.png").getImage();
+    public static final Image VIZTISZTITO = new ImageIcon("./Shared/src/main/resources/images/Viztisztito.png").getImage();
+    public static final Image TUZHELY = new ImageIcon("./Shared/src/main/resources/images/Tuzhely.png").getImage();
 
-    public static Image findImage(int hex) {
-        return switch (hex) {
-            case 0x00000001 -> terkepMezo; // térkép mező
-            case 0x00001000 -> bot; // bot
-            case 0x00010000 -> level; // levél
-            case 0x00100000 -> uveg; // üveg
-            case 0x01000000 -> hajo; // hajó
-            case 0x00000010 -> masikJatekos; // másik játékos
-            case 0x00000100 -> sajatJatekos; // saját tátékos
-            case 0x10000000 -> terkepenKivul; // terkepen kivul
-            default -> null;
-        };
+    private static final Map<Long, Image> HEX_KEP = Map.of(
+            TerkepKod.TERKEP_MEZO, TERKEP_MEZO,
+            TerkepKod.MASIK_JATEKOS, MASIK_JATEKOS,
+            TerkepKod.SAJAT_JATEKOS, SAJAT_JATEKOS,
+            TerkepKod.BOT, BOT,
+            TerkepKod.LEVEL, LEVEL,
+            TerkepKod.UVEG, UVEG,
+            TerkepKod.HAJO, HAJO,
+            TerkepKod.CAPA, CAPA,
+            TerkepKod.VIZTISZTITO, VIZTISZTITO,
+            TerkepKod.TUZHELY, TUZHELY
+    );
+
+    public static Image findImage(long hex) {
+        return HEX_KEP.get(hex);
     }
 }

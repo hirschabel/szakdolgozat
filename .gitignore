@@ -6,3 +6,6 @@
 # Maven
 log/
 target/
+
+# Adatbázis
+/Shared/src/main/resources/db/

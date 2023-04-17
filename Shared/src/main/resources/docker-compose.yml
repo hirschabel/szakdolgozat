@@ -1,0 +1,13 @@
+version: '3.1'
+
+services:
+    szakdolgozat:
+        image: postgres
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: szakdolgozat
+        volumes:
+            - ./db:/var/lib/postgresql/data
+        ports:
+            - '5432:5432'

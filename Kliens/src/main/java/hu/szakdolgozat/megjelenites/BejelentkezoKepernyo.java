@@ -1,5 +1,6 @@
 package hu.szakdolgozat.megjelenites;
 
+import hu.szakdolgozat.HashUtil;
 import hu.szakdolgozat.szerver_kapcsolat.SzerverKapcsolat;
 
 import javax.swing.JButton;
@@ -53,9 +54,12 @@ public class BejelentkezoKepernyo extends Kepernyo implements ActionListener {
         if ("login".equals(e.getActionCommand())) {
             SzerverKapcsolat kapcsolat = new SzerverKapcsolat();
             String felhasznalonev = felhasznalonevInput.getText();
-            String jelszo = new String(jelszoInput.getPassword()); // TODO: Encryption
-            if (felhasznalonev.length() > 0 && jelszo.length() > 0 && kapcsolat.csatlakozas(IP_ADDR, PORT, felhasznalonev, jelszo)) {
-                System.out.println("Login Success");
+            String jelszo = new String(jelszoInput.getPassword());
+
+            jelszo = HashUtil.encrypt(jelszo);
+
+            if (jelszo != null && felhasznalonev.length() > 0 && jelszo.length() > 0 && kapcsolat.csatlakozas(IP_ADDR, PORT, felhasznalonev, jelszo)) {
+                System.out.println("Sikeres bejelentkezés");
                 kapcsolat.inputHallgatas();
                 ablak.jatekmenetMegjelenites(kapcsolat);
             } else {

@@ -19,6 +19,11 @@ public class JatekmenetController implements KeyListener {
             case 'd', 'D' -> kapcsolat.uzenetKuld("D");
             case 's', 'S' -> kapcsolat.uzenetKuld("S");
             case 'a', 'A' -> kapcsolat.uzenetKuld("A");
+
+            case 'i', 'I' -> kapcsolat.uzenetKuld("I");
+            case 'l', 'L' -> kapcsolat.uzenetKuld("L");
+            case 'k', 'K' -> kapcsolat.uzenetKuld("K");
+            case 'j', 'J' -> kapcsolat.uzenetKuld("J");
         }
     }
 

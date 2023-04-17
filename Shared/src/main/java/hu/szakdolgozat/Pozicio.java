@@ -1,15 +1,31 @@
 package hu.szakdolgozat;
 
+import jakarta.persistence.Embeddable;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+import java.util.Random;
+
+@Embeddable
 @Data
-public class Pozicio { //TODO szerializálhatóvá tenni, ha küldeni akarjuk writeObject-tel
+@NoArgsConstructor
+public class Pozicio implements Serializable {
     private int sorPozicio;
     private int oszlopPozicio;
 
     public Pozicio(int sorPozicio, int oszlopPozicio) {
-        this.sorPozicio = sorPozicio;
-        this.oszlopPozicio = oszlopPozicio;
+        setPozicio(sorPozicio, oszlopPozicio);
+    }
+
+    public void setPozicio(int sor, int oszlop) {
+        this.sorPozicio = Math.max(sor, 0);
+        this.oszlopPozicio = Math.max(oszlop, 0);
+    }
+
+    public void setPozicio(Pozicio pozicio) {
+        this.sorPozicio = Math.max(pozicio.getSorPozicio(), 0);
+        this.oszlopPozicio = Math.max(pozicio.getOszlopPozicio(), 0);
     }
 
     public void mozgasRelativ(int sorDiff, int oszlopDiff) {
@@ -30,21 +46,21 @@ public class Pozicio { //TODO szerializálhatóvá tenni, ha küldeni akarjuk wr
         return "(" + sorPozicio + "," + oszlopPozicio + ")";
     }
 
-    private boolean latja(int sor, int oszlop, int oldal) {
-        return sor >= sorPozicio - oldal && sor < sorPozicio + oldal && oszlop >= oszlopPozicio - oldal && oszlop < oszlopPozicio + oldal;
-    }
-
-    public Pozicio getRelativePoz(Pozicio pozicio, int negyzetOldal) {
-        int sor = pozicio.getSorPozicio();
-        int oszlop = pozicio.getOszlopPozicio();
-        int oldal = negyzetOldal / 2;
-        if (!latja(sor, oszlop, oldal)) {
-            return null;
-        }
-        return new Pozicio(oldal - (sorPozicio - sor), oldal - (oszlopPozicio - oszlop));
-    }
-
     public boolean isRajta(Pozicio poz) {
         return poz.getSorPozicio() == sorPozicio && poz.getOszlopPozicio() == oszlopPozicio;
+    }
+
+    public boolean isHajon(Pozicio hajoPoz) {
+        return (hajoPoz.getSorPozicio() == sorPozicio && hajoPoz.getOszlopPozicio() == oszlopPozicio
+                || hajoPoz.getSorPozicio() + 1 == sorPozicio && hajoPoz.getOszlopPozicio() == oszlopPozicio
+                || hajoPoz.getSorPozicio() == sorPozicio && hajoPoz.getOszlopPozicio() + 1 == oszlopPozicio
+                || hajoPoz.getSorPozicio() + 1 == sorPozicio && hajoPoz.getOszlopPozicio() + 1 == oszlopPozicio);
+    }
+
+    public Pozicio randomizalas() {
+        Random r = new Random();
+        this.sorPozicio = r.nextInt(100);
+        this.oszlopPozicio = r.nextInt(100);
+        return this;
     }
 }
