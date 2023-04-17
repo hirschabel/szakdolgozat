@@ -1,5 +1,6 @@
 package hu.szakdolgozat;
 
+import hu.szakdolgozat.capa.Capa;
 import hu.szakdolgozat.dao.FelhasznaloDao;
 import hu.szakdolgozat.dao.JatekosDao;
 
@@ -36,7 +37,9 @@ public class KliensKapcsolat implements Runnable {
             };
 
             if (new FelhasznaloDao().jatekosLetezik(felhasznalo[0], felhasznalo[1])) {
-                csatlakozas.setJatekos(new JatekosDao().getJatekos(felhasznalo[0]));
+                csatlakozas.setJatekos(new JatekosDao().getJatekos(felhasznalo[0])); // Játékos betöltése
+                csatlakozas.getJatekos().setCapa(new Capa());
+
                 this.jatekosNev = felhasznalo[0];
                 output.writeObject("Sikeres csatlakozas!");
                 System.out.println("Sikeres csatlakozas");
@@ -72,20 +75,7 @@ public class KliensKapcsolat implements Runnable {
         while (connected) {
             try {
                 JatekAdat jatekAdat = jatekAdatLista.receive();
-                int[][] teljesTerkep = jatekAdat.getTerkep();
-                for (Jatekos jatekos : jatekAdat.getJatekosok()) {
-                    Pozicio jatekosPoz = jatekos.getPozicio();
-                    Pozicio hajoPoz = jatekos.getHajo().getPozicio();
-                    if (hajoPoz != null) {
-                        teljesTerkep[hajoPoz.getSorPozicio()][hajoPoz.getOszlopPozicio()] |= TerkepKod.HAJO;
-                        teljesTerkep[hajoPoz.getSorPozicio() + 1][hajoPoz.getOszlopPozicio()] |= TerkepKod.HAJO;
-                        teljesTerkep[hajoPoz.getSorPozicio()][hajoPoz.getOszlopPozicio() + 1] |= TerkepKod.HAJO;
-                        teljesTerkep[hajoPoz.getSorPozicio() + 1][hajoPoz.getOszlopPozicio() + 1] |= TerkepKod.HAJO;
-                    }
-                    if (!jatekosNev.equals(jatekos.getName())) {
-                        teljesTerkep[jatekosPoz.getSorPozicio()][jatekosPoz.getOszlopPozicio()] |= TerkepKod.MASIK_JATEKOS;
-                    }
-                }
+                long[][] teljesTerkep = jatekAdat.getTerkep();
 
                 Jatekos csatJatekos = csatlakozas.getJatekos();
                 Adat adat = new Adat(kisTerkepSzerzes(teljesTerkep), csatJatekos.getPozicio(), csatJatekos.getEszkoztar(), csatJatekos.getEroforrasok(),
@@ -101,8 +91,8 @@ public class KliensKapcsolat implements Runnable {
         }
     }
 
-    private int[][] kisTerkepSzerzes(int[][] nagyTerkep) {
-        int[][] kisTerkep = new int[10][10];
+    private long[][] kisTerkepSzerzes(long[][] nagyTerkep) {
+        long[][] kisTerkep = new long[10][10];
         Pozicio poz = csatlakozas.getJatekos().getPozicio();
 
         int jatekosSor = poz.getSorPozicio();
@@ -118,7 +108,7 @@ public class KliensKapcsolat implements Runnable {
                 }
             }
         }
-        kisTerkep[HATAR_SOR / 2][HATAR_OSZLOP / 2] |= 0x00000010; // saját játékos
+        kisTerkep[HATAR_SOR / 2][HATAR_OSZLOP / 2] |= TerkepKod.SAJAT_JATEKOS;
         return kisTerkep;
     }
 }

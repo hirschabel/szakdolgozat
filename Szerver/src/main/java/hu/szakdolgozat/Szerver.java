@@ -22,7 +22,7 @@ public class Szerver {
         System.out.println("---Szerver---");
         try (ServerSocket serverSocket = new ServerSocket(SZERVER_PORT)) {
             szerver = serverSocket;
-            int[][] terkep = new int[100][100]; // TODO: térképre betöltés (ha van)
+            long[][] terkep = new long[100][100];
             csatlakozasok = new ArrayList<>();
             jatekAdatLista = new JatekAdatLista();
             Runnable jatekmenet = new Jatekmenet(terkep, csatlakozasok, jatekAdatLista);

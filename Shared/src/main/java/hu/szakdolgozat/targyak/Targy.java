@@ -8,9 +8,9 @@ import lombok.Setter;
 @Setter
 public abstract class Targy {
     private Pozicio pozicio;
-    private int id;
+    private long id;
 
-    public Targy(int id, Pozicio pozicio) {
+    public Targy(long id, Pozicio pozicio) {
         this.id = id;
         this.pozicio = pozicio;
     }

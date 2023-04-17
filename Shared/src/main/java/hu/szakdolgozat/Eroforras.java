@@ -11,6 +11,7 @@ import java.io.Serializable;
 @Getter
 @NoArgsConstructor
 public class Eroforras implements Serializable {
+    private static final int ELET_VISSZATOLTES = 5;
     private int max_elet;
     private int max_ital;
     private int max_etel;
@@ -25,24 +26,16 @@ public class Eroforras implements Serializable {
     private int etel;
 
     public Eroforras(int max_elet, int max_ital, int max_etel) {
-        this.max_elet = max_elet;
-        this.max_ital = max_ital;
-        this.max_etel = max_etel;
-        eroforrasBeallitas();
-    }
-
-    public void eletNoveles(int max_elet) {
-        this.max_elet = max_elet;
-        eroforrasBeallitas();
+        setAll(max_elet, max_ital, max_etel);
     }
 
     public void italNoveles(int max_ital) {
-        this.max_ital = max_ital;
+        this.max_ital += max_ital;
         eroforrasBeallitas();
     }
 
     public void etelNoveles(int max_etel) {
-        this.max_etel = max_etel;
+        this.max_etel += max_etel;
         eroforrasBeallitas();
     }
 
@@ -58,7 +51,7 @@ public class Eroforras implements Serializable {
         etel = etel > 1 ? (etel - 1) : 0;
     }
 
-    public boolean isHalott() {
+    public boolean halott() {
         return elet <= 0 || ital <= 0 || etel <= 0;
     }
 
@@ -69,14 +62,27 @@ public class Eroforras implements Serializable {
     }
 
     public void italVisszatoltes() {
-        if (ital < 100) {
+        if (ital < max_ital) {
             this.ital++;
         }
     }
 
     public void etelVisszatoltes() {
-        if (etel < 100) {
+        if (etel < max_etel) {
             this.etel++;
+        }
+    }
+
+    public void setAll(int max_elet, int max_ital, int max_etel) {
+        this.max_elet = max_elet;
+        this.max_ital = max_ital;
+        this.max_etel = max_etel;
+        eroforrasBeallitas();
+    }
+
+    public void eletVisszatolt() {
+        if (elet < max_elet) {
+            this.elet += ELET_VISSZATOLTES;
         }
     }
 }

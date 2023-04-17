@@ -41,4 +41,15 @@ public class JatekosDao {
             em.getTransaction().commit();
         }
     }
+
+    public void jatekosMentes(Jatekos jatekos) {
+        Configuration configuration = new Configuration().configure("hibernate.cfg.xml");
+        try (SessionFactory sessionFactory = configuration.buildSessionFactory()) {
+            EntityManager em = sessionFactory.createEntityManager();
+
+            em.getTransaction().begin();
+            em.merge(jatekos);
+            em.getTransaction().commit();
+        }
+    }
 }

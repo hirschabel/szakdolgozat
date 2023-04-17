@@ -1,7 +1,9 @@
 package hu.szakdolgozat.szerver_kapcsolat;
 
 import hu.szakdolgozat.Adat;
+import hu.szakdolgozat.Eroforras;
 import hu.szakdolgozat.Eszkoztar;
+import hu.szakdolgozat.Pozicio;
 import lombok.Getter;
 
 import java.io.IOException;
@@ -12,13 +14,17 @@ import java.util.Arrays;
 
 public class SzerverKapcsolat {
     @Getter
-    private int[][] terkep;
+    private long[][] terkep;
     @Getter
     private Eszkoztar eszkoztar;
     @Getter
     private int szint;
     @Getter
     private int[] szuksegesTargyak;
+    @Getter
+    private Eroforras eroforras;
+    @Getter
+    private Pozicio pozicio;
     private Socket szerver;
     private ObjectOutputStream out;
     private ObjectInputStream in;
@@ -32,6 +38,8 @@ public class SzerverKapcsolat {
             in = new ObjectInputStream(szerver.getInputStream());
             bejelentkezes(felhasznaloNev, jelszo);
             eszkoztar = new Eszkoztar(0, 0, 0);
+            eroforras = new Eroforras(0, 0, 0);
+            pozicio = new Pozicio(0, 0);
             csatlakozva = true;
             return true;
         } catch (ClassNotFoundException | IOException e) {
@@ -46,11 +54,10 @@ public class SzerverKapcsolat {
                     Adat adat = (Adat) in.readObject();
                     terkep = adat.getTerkep();
                     eszkoztar = adat.getEszkoztar();
+                    eroforras = adat.getEroforras();
+                    pozicio = adat.getPozicio();
                     szint = adat.getSzint();
                     szuksegesTargyak = adat.getTargySzintlepeshez();
-                    System.out.println("Erőforrások: " + adat.getEroforras().getElet() + " - " + adat.getEroforras().getItal() + " - " + adat.getEroforras().getEtel());
-                    System.out.println("Szint: " + adat.getSzint() + " - " + Arrays.toString(adat.getTargySzintlepeshez()));
-//                    System.out.println("Pozíció: " + adat.getPozicio());
                 }
             } catch (IOException | ClassNotFoundException e) {
                 lecsatlakozas();
@@ -58,17 +65,9 @@ public class SzerverKapcsolat {
         }).start();
     }
 
-    public int[][] terkepOlvas() throws IOException, ClassNotFoundException {
-        return (int[][]) in.readObject();
-    }
-
-    public int[] intOlvas() throws IOException, ClassNotFoundException {
-        return (int[]) in.readObject();
-    }
-
     private void bejelentkezes(String felhasznaloNev, String jelszo) throws IOException, ClassNotFoundException {
         uzenetKuld(felhasznaloNev.concat(";").concat(jelszo));
-        String input = uzenetFogad();
+        String input = (String) in.readObject();
         if ("Hibas adatok!".equals(input)) {
             lecsatlakozas();
             throw new IOException("Hibas bejelentkezesi adatok!");
@@ -81,10 +80,6 @@ public class SzerverKapcsolat {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private String uzenetFogad() throws IOException, ClassNotFoundException {
-        return (String) in.readObject();
     }
 
     public void lecsatlakozas() {

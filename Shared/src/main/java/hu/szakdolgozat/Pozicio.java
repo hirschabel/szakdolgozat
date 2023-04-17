@@ -23,6 +23,11 @@ public class Pozicio implements Serializable {
         this.oszlopPozicio = Math.max(oszlop, 0);
     }
 
+    public void setPozicio(Pozicio pozicio) {
+        this.sorPozicio = Math.max(pozicio.getSorPozicio(), 0);
+        this.oszlopPozicio = Math.max(pozicio.getOszlopPozicio(), 0);
+    }
+
     public void mozgasRelativ(int sorDiff, int oszlopDiff) {
         int sorPoz = sorPozicio + sorDiff;
         int oszlopPoz = oszlopPozicio + oszlopDiff;
@@ -47,14 +52,15 @@ public class Pozicio implements Serializable {
 
     public boolean isHajon(Pozicio hajoPoz) {
         return (hajoPoz.getSorPozicio() == sorPozicio && hajoPoz.getOszlopPozicio() == oszlopPozicio
-                || hajoPoz.getSorPozicio() - 1 == sorPozicio && hajoPoz.getOszlopPozicio() == oszlopPozicio
+                || hajoPoz.getSorPozicio() + 1 == sorPozicio && hajoPoz.getOszlopPozicio() == oszlopPozicio
                 || hajoPoz.getSorPozicio() == sorPozicio && hajoPoz.getOszlopPozicio() + 1 == oszlopPozicio
-                || hajoPoz.getSorPozicio() - 1 == sorPozicio && hajoPoz.getOszlopPozicio() + 1 == oszlopPozicio);
+                || hajoPoz.getSorPozicio() + 1 == sorPozicio && hajoPoz.getOszlopPozicio() + 1 == oszlopPozicio);
     }
 
-    public void randomizalas() {
+    public Pozicio randomizalas() {
         Random r = new Random();
         this.sorPozicio = r.nextInt(100);
         this.oszlopPozicio = r.nextInt(100);
+        return this;
     }
 }

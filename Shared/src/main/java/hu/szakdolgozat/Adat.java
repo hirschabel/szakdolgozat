@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Getter
 @AllArgsConstructor
 public class Adat implements Serializable {
-    private final int[][] terkep;
+    private final long[][] terkep;
     private final Pozicio pozicio;
     private final Eszkoztar eszkoztar;
     private final Eroforras eroforras;

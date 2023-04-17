@@ -21,11 +21,15 @@ public class Eszkoztar implements Serializable {
         this.uvegSzam = uvegSzam;
     }
 
-    public void addTargy(int targyId) {
-        switch (targyId) {
-            case Bot.ID -> botSzam++;
-            case Level.ID -> levelSzam++;
-            case Uveg.ID -> uvegSzam++;
+    public void addTargy(long targyId) {
+        if (Bot.ID == targyId) {
+            botSzam++;
+        }
+        if (Level.ID == targyId) {
+            levelSzam++;
+        }
+        if (Uveg.ID == targyId) {
+            uvegSzam++;
         }
     }
 
@@ -43,5 +47,11 @@ public class Eszkoztar implements Serializable {
         this.botSzam -= csokkentes[1];
         this.uvegSzam -= csokkentes[2];
         return true;
+    }
+
+    public void urites() {
+        this.botSzam = 0;
+        this.levelSzam = 0;
+        this.uvegSzam = 0;
     }
 }

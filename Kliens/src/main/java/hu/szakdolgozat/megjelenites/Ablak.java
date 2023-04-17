@@ -26,11 +26,6 @@ public class Ablak extends JFrame {
         megjelenit(new JatekmenetKepernyo(ABLAK_SZELESSEG, ABLAK_MAGASSAG, kapcsolat));
     }
 
-    public void bejelentkezesMegjelenites() { // TODO kilépés implementálása
-
-        System.out.println("bejelentkezes megjelenites");
-    }
-
     private void megjelenit(Kepernyo kepernyo) {
         this.remove(this.kepernyo);
         this.kepernyo = kepernyo;

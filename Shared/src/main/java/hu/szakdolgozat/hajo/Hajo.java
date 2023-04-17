@@ -41,6 +41,26 @@ public class Hajo {
         }
 
         this.szint++;
+        szintBeallitas(szint);
+    }
+
+    public void halott() {
+        this.szint = 0;
+        szintBeallitas(szint);
+    }
+
+    private void szintBeallitas(int szint) {
         this.szintAdat = new SzintAdatDao().getSzintAdat(szint);
+        this.jatekos.getEroforrasok().etelNoveles(szintAdat.getItalNoveles());
+        this.jatekos.getEroforrasok().italNoveles(szintAdat.getItalNoveles());
+    }
+
+    public boolean viztisztito() {
+        return szintAdat.isItalVisszatoltes();
+    }
+
+    public boolean tuzhely() {
+        return szintAdat.isEtelVisszatoltes();
+
     }
 }

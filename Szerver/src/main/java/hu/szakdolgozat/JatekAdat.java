@@ -11,5 +11,5 @@ import java.util.List;
 @AllArgsConstructor
 public class JatekAdat {
     private List<Jatekos> jatekosok;
-    private int[][] terkep;
+    private long[][] terkep;
 }

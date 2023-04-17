@@ -1,5 +1,6 @@
 package hu.szakdolgozat;
 
+import hu.szakdolgozat.capa.Capa;
 import hu.szakdolgozat.hajo.Hajo;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -23,6 +24,9 @@ public class Jatekos {
 
     @Embedded
     private Eroforras eroforrasok;
+
+    @Transient
+    Capa capa;
 
     public Jatekos(String name, Pozicio pozicio) {
         this.name = name;
@@ -52,5 +56,23 @@ public class Jatekos {
     public void pozicioRandomizalas() {
         this.pozicio.randomizalas();
         this.hajo.getPozicio().setPozicio(pozicio.getSorPozicio(), pozicio.getOszlopPozicio());
+    }
+
+    public boolean halott() {
+        if (!eroforrasok.halott()) {
+            return false;
+        }
+        this.hajo.halott();
+        this.eroforrasok.setAll(100, 100, 100);
+        this.eszkoztar.urites();
+
+        // Random pozícióban újraéledés
+        pozicioRandomizalas();
+        this.capa.getPozicio().randomizalas();
+        return true;
+    }
+
+    public void eletVisszatolt() {
+        this.eroforrasok.eletVisszatolt();
     }
 }

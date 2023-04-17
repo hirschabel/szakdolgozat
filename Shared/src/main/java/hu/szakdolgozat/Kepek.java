@@ -2,6 +2,7 @@ package hu.szakdolgozat;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Map;
 
 public class Kepek {
     public static final Image TERKEP_MEZO = new ImageIcon("./Shared/src/main/resources/images/Viz.png").getImage();
@@ -13,18 +14,23 @@ public class Kepek {
     public static final Image SAJAT_JATEKOS = new ImageIcon("./Shared/src/main/resources/images/SajatJatekos.png").getImage();
     public static final Image TERKEPEN_KIVUL = new ImageIcon("./Shared/src/main/resources/images/TerkepenKivul.png").getImage();
     public static final Image CAPA = new ImageIcon("./Shared/src/main/resources/images/Capa.png").getImage();
+    public static final Image VIZTISZTITO = new ImageIcon("./Shared/src/main/resources/images/Viztisztito.png").getImage();
+    public static final Image TUZHELY = new ImageIcon("./Shared/src/main/resources/images/Tuzhely.png").getImage();
 
-    public static Image findImage(int hex) {
-        return switch (hex) {
-            case TerkepKod.TERKEP_MEZO -> TERKEP_MEZO;
-            case TerkepKod.MASIK_JATEKOS -> MASIK_JATEKOS;
-            case TerkepKod.SAJAT_JATEKOS -> SAJAT_JATEKOS;
-            case TerkepKod.BOT -> BOT;
-            case TerkepKod.LEVEL -> LEVEL;
-            case TerkepKod.UVEG -> UVEG;
-            case TerkepKod.HAJO -> HAJO;
-            case TerkepKod.CAPA -> CAPA;
-            default -> null;
-        };
+    private static final Map<Long, Image> HEX_KEP = Map.of(
+            TerkepKod.TERKEP_MEZO, TERKEP_MEZO,
+            TerkepKod.MASIK_JATEKOS, MASIK_JATEKOS,
+            TerkepKod.SAJAT_JATEKOS, SAJAT_JATEKOS,
+            TerkepKod.BOT, BOT,
+            TerkepKod.LEVEL, LEVEL,
+            TerkepKod.UVEG, UVEG,
+            TerkepKod.HAJO, HAJO,
+            TerkepKod.CAPA, CAPA,
+            TerkepKod.VIZTISZTITO, VIZTISZTITO,
+            TerkepKod.TUZHELY, TUZHELY
+    );
+
+    public static Image findImage(long hex) {
+        return HEX_KEP.get(hex);
     }
 }

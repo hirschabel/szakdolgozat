@@ -1,12 +1,14 @@
 package hu.szakdolgozat;
 
 public class TerkepKod {
-    public static final int TERKEP_MEZO = 0x00000001;
-    public static final int MASIK_JATEKOS = 0x00000010;
-    public static final int SAJAT_JATEKOS = 0x00000100;
-    public static final int BOT = 0x00001000;
-    public static final int LEVEL = 0x00010000;
-    public static final int UVEG = 0x00100000;
-    public static final int HAJO = 0x01000000;
-    public static final int CAPA = 0x10000000;
+    public static final long TERKEP_MEZO     = 0x0000000001L;
+    public static final long MASIK_JATEKOS   = 0x0000000010L;
+    public static final long SAJAT_JATEKOS   = 0x0000000100L;
+    public static final long BOT             = 0x0000001000L;
+    public static final long LEVEL           = 0x0000010000L;
+    public static final long UVEG            = 0x0000100000L;
+    public static final long HAJO            = 0x0001000000L;
+    public static final long CAPA            = 0x0010000000L;
+    public static final long VIZTISZTITO    = 0x0100000000L;
+    public static final long TUZHELY        = 0x1000000000L;
 }
