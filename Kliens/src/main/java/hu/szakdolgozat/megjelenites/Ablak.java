@@ -1,13 +1,13 @@
 package hu.szakdolgozat.megjelenites;
 
-import hu.szakdolgozat.szerver_kapcsolat.SzerverKapcsolat;
+import hu.szakdolgozat.kommunikacio.SzerverKapcsolat;
 
 import javax.swing.JFrame;
 import java.awt.*;
 
 public class Ablak extends JFrame {
-    private final int ABLAK_SZELESSEG = 800;
-    private final int ABLAK_MAGASSAG = 800;
+    private static final int ABLAK_SZELESSEG = 800;
+    private static final int ABLAK_MAGASSAG = 800;
     private Kepernyo kepernyo;
 
     public Ablak() {

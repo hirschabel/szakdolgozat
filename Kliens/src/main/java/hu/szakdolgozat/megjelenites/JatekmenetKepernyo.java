@@ -1,8 +1,12 @@
 package hu.szakdolgozat.megjelenites;
 
 import hu.szakdolgozat.*;
+import hu.szakdolgozat.util.KepUtil;
+import hu.szakdolgozat.adatok.Adat;
 import hu.szakdolgozat.controller.JatekmenetController;
-import hu.szakdolgozat.szerver_kapcsolat.SzerverKapcsolat;
+import hu.szakdolgozat.jatekos.Eroforras;
+import hu.szakdolgozat.jatekos.Eszkoztar;
+import hu.szakdolgozat.kommunikacio.SzerverKapcsolat;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,12 +41,13 @@ public class JatekmenetKepernyo extends Kepernyo {
 
         new Thread(() -> {
             while (true) {
-                terkep = kapcsolat.getTerkep();
-                eszkoztar = kapcsolat.getEszkoztar();
-                eroforras = kapcsolat.getEroforras();
-                pozicio = kapcsolat.getPozicio();
-                szint = kapcsolat.getSzint();
-                szuksegesTargyak = kapcsolat.getSzuksegesTargyak();
+                Adat adat = kapcsolat.getAdat();
+                terkep = adat.getTerkep();
+                eszkoztar = adat.getEszkoztar();
+                eroforras = adat.getEroforras();
+                pozicio = adat.getPozicio();
+                szint = adat.getSzint();
+                szuksegesTargyak = adat.getTargySzintlepeshez();
 
                 repaint();
             }
@@ -60,16 +65,16 @@ public class JatekmenetKepernyo extends Kepernyo {
         for (int sor = 0; sor < HATAR_SOR; sor++) {
             for (int oszlop = 0; oszlop < HATAR_OSZLOP; oszlop++) {
                 long[] templates = new long[]{
-                        TerkepKod.TERKEP_MEZO,
-                        TerkepKod.BOT,
-                        TerkepKod.LEVEL,
-                        TerkepKod.UVEG,
-                        TerkepKod.HAJO,
-                        TerkepKod.VIZTISZTITO,
-                        TerkepKod.TUZHELY,
-                        TerkepKod.CAPA,
-                        TerkepKod.SAJAT_JATEKOS,
-                        TerkepKod.MASIK_JATEKOS
+                        TerkepKodok.TERKEP_MEZO,
+                        TerkepKodok.BOT,
+                        TerkepKodok.LEVEL,
+                        TerkepKodok.UVEG,
+                        TerkepKodok.HAJO,
+                        TerkepKodok.VIZTISZTITO,
+                        TerkepKodok.TUZHELY,
+                        TerkepKodok.CAPA,
+                        TerkepKodok.SAJAT_JATEKOS,
+                        TerkepKodok.MASIK_JATEKOS
                 };
 
                 int hossz = this.ABLAK_MAGASSAG / 9;
@@ -80,11 +85,11 @@ public class JatekmenetKepernyo extends Kepernyo {
                 for (long template : templates) {
                     if ((terkep[sor][oszlop] & template) != 0x0000000000L) {
                         terkepenKivul = false;
-                        g.drawImage(Kepek.findImage(template), x, y, hossz, hossz, null);
+                        g.drawImage(KepUtil.findImage(template), x, y, hossz, hossz, null);
                     }
                 }
                 if (terkepenKivul) {
-                    g.drawImage(Kepek.TERKEPEN_KIVUL, x, y, hossz, hossz, null);
+                    g.drawImage(KepUtil.terkepenKivul(), x, y, hossz, hossz, null);
                 }
             }
         }

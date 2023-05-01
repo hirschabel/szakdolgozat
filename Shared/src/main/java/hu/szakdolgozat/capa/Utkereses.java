@@ -1,16 +1,19 @@
 package hu.szakdolgozat.capa;
 
 import hu.szakdolgozat.Pozicio;
-import hu.szakdolgozat.TerkepKod;
+import hu.szakdolgozat.TerkepKodok;
 
+import java.security.SecureRandom;
 import java.util.*;
 
 public class Utkereses {
     private final long[][] map;
     private final int width;
     private final int height;
+    private static final Random random = new SecureRandom();
 
     public Utkereses(long[][] map) {
+//        this.random = new SecureRandom();
         this.map = map;
         this.width = map.length;
         this.height = map[0].length;
@@ -65,7 +68,7 @@ public class Utkereses {
         if (neighbors.isEmpty()) {
             return start;
         }
-        return neighbors.get(new Random().nextInt((neighbors.size()))).pozicio;
+        return neighbors.get(random.nextInt((neighbors.size()))).pozicio;
     }
 
     private List<Node> getNeighbors(Node node, Pozicio end) {
@@ -102,7 +105,7 @@ public class Utkereses {
     }
 
     private boolean isValid(int x, int y) {
-        return x >= 0 && x < width && y >= 0 && y < height && (map[x][y] & TerkepKod.HAJO) == 0;
+        return x >= 0 && x < width && y >= 0 && y < height && (map[x][y] & TerkepKodok.HAJO) == 0;
     }
 
     private int heuristic(Pozicio a, Pozicio b) {
@@ -125,6 +128,14 @@ public class Utkereses {
         @Override
         public int compareTo(Node o) {
             return Integer.compare(fScore, o.fScore);
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            hash = 89 * hash + pozicio.getSorPozicio();
+            hash = 89 * hash + pozicio.getOszlopPozicio();
+            return hash;
         }
 
         @Override

@@ -1,4 +1,4 @@
-package hu.szakdolgozat;
+package hu.szakdolgozat.util;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -30,7 +30,7 @@ public class HashUtil {
             return Base64.getEncoder()
                     .encodeToString(cipher.doFinal(strToEncrypt.getBytes(StandardCharsets.UTF_8)));
         } catch (Exception e) {
-            System.out.println("Error while encrypting: " + e.toString());
+            e.printStackTrace();
         }
         return null;
     }
