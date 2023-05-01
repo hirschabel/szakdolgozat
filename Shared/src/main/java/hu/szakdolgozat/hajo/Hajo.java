@@ -1,7 +1,7 @@
 package hu.szakdolgozat.hajo;
 
-import hu.szakdolgozat.Eszkoztar;
-import hu.szakdolgozat.Jatekos;
+import hu.szakdolgozat.jatekos.Eszkoztar;
+import hu.szakdolgozat.jatekos.Jatekos;
 import hu.szakdolgozat.Pozicio;
 import hu.szakdolgozat.dao.SzintAdatDao;
 import jakarta.persistence.*;
@@ -28,10 +28,14 @@ public class Hajo {
     @JoinColumn(name = "szint_id")
     private SzintAdat szintAdat;
 
-    public Hajo(Pozicio pozicio, int szint) {
+    @Transient
+    private SzintAdatDao szintAdatDao;
+
+    public Hajo(Pozicio pozicio, int szint, SzintAdatDao szintAdatDao) {
         this.pozicio = pozicio;
         this.szint = szint;
-        this.szintAdat = new SzintAdatDao().getSzintAdat(szint);
+        this.szintAdatDao = szintAdatDao;
+        this.szintAdat = szintAdatDao.getSzintAdat(szint);
     }
 
     public void szintlepes(Eszkoztar eszkoztar) {
@@ -50,7 +54,7 @@ public class Hajo {
     }
 
     private void szintBeallitas(int szint) {
-        this.szintAdat = new SzintAdatDao().getSzintAdat(szint);
+        this.szintAdat = szintAdatDao.getSzintAdat(szint);
         this.jatekos.getEroforrasok().etelNoveles(szintAdat.getItalNoveles());
         this.jatekos.getEroforrasok().italNoveles(szintAdat.getItalNoveles());
     }

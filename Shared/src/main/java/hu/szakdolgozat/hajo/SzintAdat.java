@@ -2,12 +2,14 @@ package hu.szakdolgozat.hajo;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor(force = true)
+@AllArgsConstructor
 public class SzintAdat {
     @Id
     private int id;

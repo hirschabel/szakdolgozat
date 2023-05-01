@@ -1,6 +1,6 @@
 package hu.szakdolgozat.dao;
 
-import hu.szakdolgozat.Jatekos;
+import hu.szakdolgozat.jatekos.Jatekos;
 import hu.szakdolgozat.Pozicio;
 import jakarta.persistence.EntityManager;
 import org.hibernate.SessionFactory;

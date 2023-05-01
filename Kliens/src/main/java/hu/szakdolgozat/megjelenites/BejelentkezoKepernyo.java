@@ -1,7 +1,7 @@
 package hu.szakdolgozat.megjelenites;
 
-import hu.szakdolgozat.HashUtil;
-import hu.szakdolgozat.szerver_kapcsolat.SzerverKapcsolat;
+import hu.szakdolgozat.util.HashUtil;
+import hu.szakdolgozat.kommunikacio.SzerverKapcsolat;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -13,8 +13,8 @@ import java.awt.event.ActionListener;
 
 public class BejelentkezoKepernyo extends Kepernyo implements ActionListener {
     private final Ablak ablak;
-    private final int PORT = 52564;
-    private final String IP_ADDR = "127.0.0.1";
+    private static final int PORT = 52564;
+    private static final String IP_ADDR = "127.0.0.1";
     private JButton csatlakozas;
     private JTextField felhasznalonevInput;
     private JPasswordField jelszoInput;

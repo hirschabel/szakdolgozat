@@ -1,8 +1,16 @@
-package hu.szakdolgozat;
+package hu.szakdolgozat.kommunikacio;
 
+import hu.szakdolgozat.Pozicio;
+import hu.szakdolgozat.Szerver;
+import hu.szakdolgozat.TerkepKodok;
+import hu.szakdolgozat.adatok.Adat;
+import hu.szakdolgozat.adatok.Csatlakozas;
+import hu.szakdolgozat.adatok.JatekAdat;
+import hu.szakdolgozat.adatok.JatekAdatLista;
 import hu.szakdolgozat.capa.Capa;
 import hu.szakdolgozat.dao.FelhasznaloDao;
 import hu.szakdolgozat.dao.JatekosDao;
+import hu.szakdolgozat.jatekos.Jatekos;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -14,7 +22,6 @@ public class KliensKapcsolat implements Runnable {
     private static final int HATAR_OSZLOP = 9;
     private final Szerver szerver;
     private final Csatlakozas csatlakozas;
-    private String jatekosNev;
     private ObjectOutputStream output;
     private ObjectInputStream input;
     private boolean connected;
@@ -37,10 +44,9 @@ public class KliensKapcsolat implements Runnable {
             };
 
             if (new FelhasznaloDao().jatekosLetezik(felhasznalo[0], felhasznalo[1])) {
-                csatlakozas.setJatekos(new JatekosDao().getJatekos(felhasznalo[0])); // Játékos betöltése
+                csatlakozas.setJatekos(new JatekosDao().getJatekos(felhasznalo[0]));
                 csatlakozas.getJatekos().setCapa(new Capa());
 
-                this.jatekosNev = felhasznalo[0];
                 output.writeObject("Sikeres csatlakozas!");
                 System.out.println("Sikeres csatlakozas");
                 connected = true;
@@ -84,7 +90,6 @@ public class KliensKapcsolat implements Runnable {
                 output.writeObject(adat);
                 output.reset();
             } catch (IOException e) {
-                System.out.println("outputbol torolve");
                 connected = false;
                 szerver.deleteCsatlakozas(csatlakozas);
             }
@@ -108,7 +113,7 @@ public class KliensKapcsolat implements Runnable {
                 }
             }
         }
-        kisTerkep[HATAR_SOR / 2][HATAR_OSZLOP / 2] |= TerkepKod.SAJAT_JATEKOS;
+        kisTerkep[HATAR_SOR / 2][HATAR_OSZLOP / 2] |= TerkepKodok.SAJAT_JATEKOS;
         return kisTerkep;
     }
 }

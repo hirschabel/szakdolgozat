@@ -13,7 +13,7 @@
         <property name="hibernate.format_sql">true</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
 
-        <mapping class="hu.szakdolgozat.Jatekos"/>
+        <mapping class="hu.szakdolgozat.jatekos.Jatekos"/>
         <mapping class="hu.szakdolgozat.hajo.Hajo"/>
         <mapping class="hu.szakdolgozat.hajo.SzintAdat"/>
     </session-factory>

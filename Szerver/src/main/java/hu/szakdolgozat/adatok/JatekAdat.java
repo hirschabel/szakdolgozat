@@ -1,5 +1,6 @@
-package hu.szakdolgozat;
+package hu.szakdolgozat.adatok;
 
+import hu.szakdolgozat.jatekos.Jatekos;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

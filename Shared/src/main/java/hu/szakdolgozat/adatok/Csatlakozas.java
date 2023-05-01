@@ -1,10 +1,13 @@
-package hu.szakdolgozat;
+package hu.szakdolgozat.adatok;
 
-import lombok.Data;
+import hu.szakdolgozat.jatekos.Jatekos;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.net.Socket;
 
-@Data
+@Getter
+@Setter
 public class Csatlakozas {
     private Jatekos jatekos;
     private Socket kliens;
