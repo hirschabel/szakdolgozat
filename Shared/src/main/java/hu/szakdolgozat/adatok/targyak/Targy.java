@@ -1,4 +1,4 @@
-package hu.szakdolgozat.targyak;
+package hu.szakdolgozat.adatok.targyak;
 
 import hu.szakdolgozat.Pozicio;
 import lombok.Getter;
@@ -10,7 +10,7 @@ public abstract class Targy {
     private Pozicio pozicio;
     private long id;
 
-    public Targy(long id, Pozicio pozicio) {
+    Targy(long id, Pozicio pozicio) {
         this.id = id;
         this.pozicio = pozicio;
     }

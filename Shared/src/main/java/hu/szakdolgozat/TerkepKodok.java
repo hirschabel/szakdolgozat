@@ -1,6 +1,6 @@
 package hu.szakdolgozat;
 
-public class TerkepKod {
+public class TerkepKodok {
     public static final long TERKEP_MEZO     = 0x0000000001L;
     public static final long MASIK_JATEKOS   = 0x0000000010L;
     public static final long SAJAT_JATEKOS   = 0x0000000100L;

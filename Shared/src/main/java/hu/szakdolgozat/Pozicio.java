@@ -5,12 +5,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.security.SecureRandom;
 import java.util.Random;
 
 @Embeddable
 @Data
 @NoArgsConstructor
 public class Pozicio implements Serializable {
+    private static final Random random = new SecureRandom();
     private int sorPozicio;
     private int oszlopPozicio;
 
@@ -58,9 +60,8 @@ public class Pozicio implements Serializable {
     }
 
     public Pozicio randomizalas() {
-        Random r = new Random();
-        this.sorPozicio = r.nextInt(100);
-        this.oszlopPozicio = r.nextInt(100);
+        this.sorPozicio = random.nextInt(100);
+        this.oszlopPozicio = random.nextInt(100);
         return this;
     }
 }

@@ -1,8 +1,10 @@
-package hu.szakdolgozat;
+package hu.szakdolgozat.jatekos;
 
+import hu.szakdolgozat.adatok.targyak.Bot;
+import hu.szakdolgozat.adatok.targyak.Level;
+import hu.szakdolgozat.adatok.targyak.Uveg;
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
-import hu.szakdolgozat.targyak.*;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;

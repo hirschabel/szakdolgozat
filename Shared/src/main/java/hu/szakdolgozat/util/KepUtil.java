@@ -1,10 +1,12 @@
-package hu.szakdolgozat;
+package hu.szakdolgozat.util;
+
+import hu.szakdolgozat.TerkepKodok;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Map;
 
-public class Kepek {
+public class KepUtil {
     public static final Image TERKEP_MEZO = new ImageIcon("./Shared/src/main/resources/images/Viz.png").getImage();
     public static final Image BOT = new ImageIcon("./Shared/src/main/resources/images/Bot.png").getImage();
     public static final Image LEVEL = new ImageIcon("./Shared/src/main/resources/images/Level.png").getImage();
@@ -18,19 +20,23 @@ public class Kepek {
     public static final Image TUZHELY = new ImageIcon("./Shared/src/main/resources/images/Tuzhely.png").getImage();
 
     private static final Map<Long, Image> HEX_KEP = Map.of(
-            TerkepKod.TERKEP_MEZO, TERKEP_MEZO,
-            TerkepKod.MASIK_JATEKOS, MASIK_JATEKOS,
-            TerkepKod.SAJAT_JATEKOS, SAJAT_JATEKOS,
-            TerkepKod.BOT, BOT,
-            TerkepKod.LEVEL, LEVEL,
-            TerkepKod.UVEG, UVEG,
-            TerkepKod.HAJO, HAJO,
-            TerkepKod.CAPA, CAPA,
-            TerkepKod.VIZTISZTITO, VIZTISZTITO,
-            TerkepKod.TUZHELY, TUZHELY
+            TerkepKodok.TERKEP_MEZO, TERKEP_MEZO,
+            TerkepKodok.MASIK_JATEKOS, MASIK_JATEKOS,
+            TerkepKodok.SAJAT_JATEKOS, SAJAT_JATEKOS,
+            TerkepKodok.BOT, BOT,
+            TerkepKodok.LEVEL, LEVEL,
+            TerkepKodok.UVEG, UVEG,
+            TerkepKodok.HAJO, HAJO,
+            TerkepKodok.CAPA, CAPA,
+            TerkepKodok.VIZTISZTITO, VIZTISZTITO,
+            TerkepKodok.TUZHELY, TUZHELY
     );
 
     public static Image findImage(long hex) {
         return HEX_KEP.get(hex);
+    }
+
+    public static Image terkepenKivul() {
+        return TERKEPEN_KIVUL;
     }
 }

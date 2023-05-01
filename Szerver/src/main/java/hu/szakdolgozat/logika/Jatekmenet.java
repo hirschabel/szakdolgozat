@@ -1,12 +1,21 @@
-package hu.szakdolgozat;
+package hu.szakdolgozat.logika;
 
+import hu.szakdolgozat.Pozicio;
+import hu.szakdolgozat.TerkepKodok;
+import hu.szakdolgozat.adatok.Csatlakozas;
+import hu.szakdolgozat.adatok.JatekAdat;
+import hu.szakdolgozat.adatok.JatekAdatLista;
 import hu.szakdolgozat.capa.Utkereses;
 import hu.szakdolgozat.dao.JatekosDao;
-import hu.szakdolgozat.targyak.Bot;
-import hu.szakdolgozat.targyak.Level;
-import hu.szakdolgozat.targyak.Targy;
-import hu.szakdolgozat.targyak.Uveg;
+import hu.szakdolgozat.adatok.targyak.Bot;
+import hu.szakdolgozat.adatok.targyak.Level;
+import hu.szakdolgozat.adatok.targyak.Targy;
+import hu.szakdolgozat.adatok.targyak.Uveg;
+import hu.szakdolgozat.jatekos.Jatekos;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,6 +23,7 @@ import java.util.Random;
 
 import static hu.szakdolgozat.capa.Capa.SEBZES;
 
+@Getter
 public class Jatekmenet implements Runnable {
     private static final int MENTES_GYAKORISAG_LEPESBEN = 20;
     private static int lepes = 0;
@@ -21,18 +31,24 @@ public class Jatekmenet implements Runnable {
     private final List<Csatlakozas> csatlakozasok;
     private final List<Targy> targyak;
     private final JatekAdatLista jatekAdatLista;
+    private static final Random random = new SecureRandom();
+
+    @Setter
+    private JatekosDao jatekosDao;
 
     public Jatekmenet(long[][] terkep, List<Csatlakozas> csatlakozasok, JatekAdatLista jatekAdatLista) {
         this.csatlakozasok = csatlakozasok;
         this.terkep = terkep;
         this.jatekAdatLista = jatekAdatLista;
         this.targyak = new ArrayList<>();
+        this.jatekosDao = new JatekosDao();
+//        this.random = new SecureRandom();
     }
 
     @Override
     public void run() {
         for (long[] sor : terkep) {
-            Arrays.fill(sor, TerkepKod.TERKEP_MEZO);
+            Arrays.fill(sor, TerkepKodok.TERKEP_MEZO);
         }
         if (lepes % 3 == 0) {
             // 1. Tárgy léptetés (törlés, ami kiesik)
@@ -64,12 +80,12 @@ public class Jatekmenet implements Runnable {
             int sor = jatekosPoz.getSorPozicio();
             int oszlop = jatekosPoz.getOszlopPozicio();
 
-            if ((terkep[sor][oszlop] & TerkepKod.HAJO) == 0) {
+            if ((terkep[sor][oszlop] & TerkepKodok.HAJO) == 0) {
                 capaPoz.setPozicio(new Utkereses(terkep).findPath(capaPoz, jatekosPoz));
             } else {
                 capaPoz.setPozicio(new Utkereses(terkep).randomPoz(capaPoz, jatekosPoz));
             }
-            terkep[capaPoz.getSorPozicio()][capaPoz.getOszlopPozicio()] |= TerkepKod.CAPA;
+            terkep[capaPoz.getSorPozicio()][capaPoz.getOszlopPozicio()] |= TerkepKodok.CAPA;
 
             if (capaPoz.isRajta(jatekosPoz)) {
                 currJatekos.getEroforrasok().eletCsokkentes(SEBZES);
@@ -84,7 +100,7 @@ public class Jatekmenet implements Runnable {
         jatekAdatLista.send(new JatekAdat(jatekosok, terkep));
     }
 
-    private void targyLeptetes() {
+    public void targyLeptetes() {
         for (Targy targy : targyak) {
             int sorPoz = targy.getPozicio().getSorPozicio() + 1;
             if (sorPoz <= 100) {
@@ -95,8 +111,6 @@ public class Jatekmenet implements Runnable {
     }
 
     public void tagyGeneralas() {
-        Random random = new Random();
-
         for (int i = 0; i < 5; i++) {
             int id = random.nextInt(3);
             int sor = random.nextInt(100);
@@ -111,18 +125,18 @@ public class Jatekmenet implements Runnable {
         }
     }
 
-    private void jatekosInput(List<Jatekos> jatekosok) {
+    public void jatekosInput(List<Jatekos> jatekosok) {
         for (Csatlakozas csatlakozas : csatlakozasok) {
             Jatekos currJatekos = csatlakozas.getJatekos();
             if (currJatekos != null) {
                 jatekosok.add(currJatekos);
                 if (lepes % 3 == 0) {
                     currJatekos.getEroforrasok().italCsokkentes();
+                    currJatekos.targyGeneralas();
                 } else if (lepes % 5 == 0) {
                     currJatekos.getEroforrasok().etelCsokkentes();
                 }
                 inputKezeles(csatlakozas.getUtasitas(), currJatekos);
-
 
                 if (currJatekos.halott()) {
                     new Thread(() -> new JatekosDao().jatekosMentes(currJatekos)).start();
@@ -139,7 +153,7 @@ public class Jatekmenet implements Runnable {
         }
     }
 
-    private void targyFelvetel(List<Jatekos> jatekosok) {
+    public void targyFelvetel(List<Jatekos> jatekosok) {
         targyak.removeIf(p -> {
             for (Jatekos jatekos : jatekosok) {
                 if (!jatekos.getPozicio().isHajon(jatekos.getHajo().getPozicio()) && jatekos.getPozicio().isRajta(p.getPozicio())) {
@@ -151,7 +165,7 @@ public class Jatekmenet implements Runnable {
         });
     }
 
-    private void terkepFrissites(List<Jatekos> jatekosok) {
+    public void terkepFrissites(List<Jatekos> jatekosok) {
         for (Targy targy : targyak) {
             terkep[targy.getPozicio().getSorPozicio()][targy.getPozicio().getOszlopPozicio()] |= targy.getId();
         }
@@ -159,21 +173,21 @@ public class Jatekmenet implements Runnable {
             Pozicio jatekosPoz = jatekos.getPozicio();
             Pozicio hajoPoz = jatekos.getHajo().getPozicio();
             if (jatekosPoz != null) {
-                terkep[jatekosPoz.getSorPozicio()][jatekosPoz.getOszlopPozicio()] |= TerkepKod.MASIK_JATEKOS;
+                terkep[jatekosPoz.getSorPozicio()][jatekosPoz.getOszlopPozicio()] |= TerkepKodok.MASIK_JATEKOS;
             }
             if (hajoPoz != null) {
                 int sor = hajoPoz.getSorPozicio();
                 int oszlop = hajoPoz.getOszlopPozicio();
-                terkep[sor][oszlop] |= TerkepKod.HAJO;
-                terkep[sor + 1][oszlop] |= TerkepKod.HAJO;
-                terkep[sor][oszlop + 1] |= TerkepKod.HAJO;
-                terkep[sor + 1][oszlop + 1] |= TerkepKod.HAJO;
+                terkep[sor][oszlop] |= TerkepKodok.HAJO;
+                terkep[sor + 1][oszlop] |= TerkepKodok.HAJO;
+                terkep[sor][oszlop + 1] |= TerkepKodok.HAJO;
+                terkep[sor + 1][oszlop + 1] |= TerkepKodok.HAJO;
 
                 if (jatekos.getHajo().viztisztito()) {
-                    terkep[sor][oszlop] |= TerkepKod.VIZTISZTITO;
+                    terkep[sor][oszlop] |= TerkepKodok.VIZTISZTITO;
                 }
                 if (jatekos.getHajo().tuzhely()) {
-                    terkep[sor][oszlop + 1] |= TerkepKod.TUZHELY;
+                    terkep[sor][oszlop + 1] |= TerkepKodok.TUZHELY;
                 }
             }
 
@@ -193,7 +207,7 @@ public class Jatekmenet implements Runnable {
      * @param irany A játékostól kapott mozgás input
      * @param jatekos A mozgó játékos
      */
-    private void inputKezeles(String irany, Jatekos jatekos) {
+    public void inputKezeles(String irany, Jatekos jatekos) {
         Pozicio jatekosPoz = jatekos.getPozicio();
         Pozicio hajoPoz = jatekos.getHajo().getPozicio();
         int sorDiff = 0;

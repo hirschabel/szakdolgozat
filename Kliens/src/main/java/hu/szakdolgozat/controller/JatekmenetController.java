@@ -1,6 +1,6 @@
 package hu.szakdolgozat.controller;
 
-import hu.szakdolgozat.szerver_kapcsolat.SzerverKapcsolat;
+import hu.szakdolgozat.kommunikacio.SzerverKapcsolat;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

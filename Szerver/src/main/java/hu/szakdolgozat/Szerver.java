@@ -1,5 +1,10 @@
 package hu.szakdolgozat;
 
+import hu.szakdolgozat.adatok.Csatlakozas;
+import hu.szakdolgozat.adatok.JatekAdatLista;
+import hu.szakdolgozat.kommunikacio.KliensKapcsolat;
+import hu.szakdolgozat.logika.Jatekmenet;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -10,15 +15,16 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Szerver {
-    private static final int SZERVER_PORT = 52564;
+    public static final int SZERVER_PORT = 52564;
     private static final int TICK_MILLISECOND = 300;
     private static final int MAX_JATEKOS_SZAM = 10;
     private int jatekosSzam;
     private ServerSocket szerver;
     private List<Csatlakozas> csatlakozasok;
     private JatekAdatLista jatekAdatLista;
+    private ScheduledExecutorService executor;
 
-    public Szerver() {
+    public void startSzerver() {
         System.out.println("---Szerver---");
         try (ServerSocket serverSocket = new ServerSocket(SZERVER_PORT)) {
             szerver = serverSocket;
@@ -27,7 +33,7 @@ public class Szerver {
             jatekAdatLista = new JatekAdatLista();
             Runnable jatekmenet = new Jatekmenet(terkep, csatlakozasok, jatekAdatLista);
 
-            ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+            executor = Executors.newScheduledThreadPool(1);
             executor.scheduleAtFixedRate(jatekmenet, 0, TICK_MILLISECOND, TimeUnit.MILLISECONDS);
 
             csatlakozasFogadas();
@@ -57,6 +63,7 @@ public class Szerver {
     }
 
     public static void main(String[] args) {
-        new Szerver();
+        Szerver szerver = new Szerver();
+        szerver.startSzerver();
     }
 }
