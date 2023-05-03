@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@NoArgsConstructor
 public class Hajo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,13 +28,17 @@ public class Hajo {
     private SzintAdat szintAdat;
 
     @Transient
-    private SzintAdatDao szintAdatDao;
+    private final SzintAdatDao szintAdatDao;
 
     public Hajo(Pozicio pozicio, int szint, SzintAdatDao szintAdatDao) {
         this.pozicio = pozicio;
         this.szint = szint;
         this.szintAdatDao = szintAdatDao;
         this.szintAdat = szintAdatDao.getSzintAdat(szint);
+    }
+
+    public Hajo() {
+        this.szintAdatDao = new SzintAdatDao();
     }
 
     public void szintlepes(Eszkoztar eszkoztar) {
