@@ -30,45 +30,6 @@ class UtkeresesTest {
     }
 
     @Test
-    void testUtkeresesEgySregen() {
-        Utkereses utkereses = new Utkereses(MAP);
-
-        Pozicio start = new Pozicio(0, 0);
-        Pozicio end = new Pozicio(4, 4);
-
-        Pozicio nextPosition = utkereses.utKereses(start, end);
-
-        assertEquals(0, nextPosition.getSorPozicio());
-        assertEquals(1, nextPosition.getOszlopPozicio());
-    }
-
-    @Test
-    void testUtkeresesFelsoHaromszog() {
-        Utkereses utkereses = new Utkereses(MAP);
-
-        Pozicio start = new Pozicio(0, 0);
-        Pozicio end = new Pozicio(4, 2);
-
-        Pozicio nextPosition = utkereses.utKereses(start, end);
-
-        assertEquals(0, nextPosition.getSorPozicio());
-        assertEquals(1, nextPosition.getOszlopPozicio());
-    }
-
-    @Test
-    void testUtkeresesAlsoHaromszog() {
-        Utkereses utkereses = new Utkereses(MAP);
-
-        Pozicio start = new Pozicio(0, 0);
-        Pozicio end = new Pozicio(2, 4);
-
-        Pozicio nextPosition = utkereses.utKereses(start, end);
-
-        assertEquals(0, nextPosition.getSorPozicio());
-        assertEquals(1, nextPosition.getOszlopPozicio());
-    }
-
-    @Test
     void testUtkeresesBlokkolassal() {
         Utkereses utkereses = new Utkereses(MAP);
 

@@ -24,9 +24,26 @@ class PozicioTest {
     @Test
     void testMozgasRelativ() {
         Pozicio pozicio = new Pozicio(2, 2);
+
+        pozicio.mozgasRelativ(1, 1);
+        assertEquals(3, pozicio.getSorPozicio());
+        assertEquals(3, pozicio.getOszlopPozicio());
+
+        pozicio.mozgasRelativ(0, 0);
+        assertEquals(3, pozicio.getSorPozicio());
+        assertEquals(3, pozicio.getOszlopPozicio());
+
+        pozicio.mozgasRelativ(-1, -1);
+        assertEquals(2, pozicio.getSorPozicio());
+        assertEquals(2, pozicio.getOszlopPozicio());
+
         pozicio.mozgasRelativ(1, -1);
         assertEquals(3, pozicio.getSorPozicio());
         assertEquals(1, pozicio.getOszlopPozicio());
+
+        pozicio.mozgasRelativ(-1, 1);
+        assertEquals(2, pozicio.getSorPozicio());
+        assertEquals(2, pozicio.getOszlopPozicio());
     }
 
     @Test
@@ -59,8 +76,15 @@ class PozicioTest {
     @Test
     void testIsNotHajon() {
         Pozicio hajoPoz = new Pozicio(1, 1);
-        Pozicio pozicio = new Pozicio(0, 1);
-        assertFalse(pozicio.isHajon(hajoPoz));
+
+        assertFalse(new Pozicio(0, 1).isHajon(hajoPoz));
+        assertFalse(new Pozicio(0, 2).isHajon(hajoPoz));
+        assertFalse(new Pozicio(1, 0).isHajon(hajoPoz));
+        assertFalse(new Pozicio(1, 3).isHajon(hajoPoz));
+        assertFalse(new Pozicio(2, 0).isHajon(hajoPoz));
+        assertFalse(new Pozicio(2, 3).isHajon(hajoPoz));
+        assertFalse(new Pozicio(3, 1).isHajon(hajoPoz));
+        assertFalse(new Pozicio(3, 2).isHajon(hajoPoz));
     }
 
     @Test

@@ -1,6 +1,5 @@
 package hu.szakdolgozat.jatekos;
 
-import hu.szakdolgozat.jatekos.Eroforras;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,18 +52,6 @@ class EroforrasTest {
     }
 
     @Test
-    void testRosszHalal() {
-        Eroforras eroforras = new Eroforras(100, 100, 100);
-        assertFalse(eroforras.halott());
-    }
-
-    @Test
-    void testHalal() {
-        Eroforras eroforras = new Eroforras(0, 100, 100);
-        assertTrue(eroforras.halott());
-    }
-
-    @Test
     void testItalVisszatoltes() {
         Eroforras eroforras = new Eroforras(100, 50, 100);
         eroforras.setItal(49);
@@ -89,5 +76,32 @@ class EroforrasTest {
         eroforras.eletVisszatoltes();
 
         assertEquals(95, eroforras.getElet());
+    }
+
+    @Test
+    void testEletVisszatoltMaxFelett() {
+        Eroforras eroforras = new Eroforras(100, 100, 100);
+        eroforras.setElet(98);
+        eroforras.eletVisszatoltes();
+
+        assertEquals(100, eroforras.getElet());
+    }
+
+
+    @Test
+    void testRosszHalal() {
+        Eroforras eroforras = new Eroforras(100, 100, 100);
+        assertFalse(eroforras.halott());
+    }
+
+    @Test
+    void testHalal() {
+        Eroforras eroforrasElet = new Eroforras(0, 100, 100);
+        Eroforras eroforrasItal = new Eroforras(100, 0, 100);
+        Eroforras eroforrasEtel = new Eroforras(100, 100, 0);
+
+        assertTrue(eroforrasElet.halott());
+        assertTrue(eroforrasItal.halott());
+        assertTrue(eroforrasEtel.halott());
     }
 }

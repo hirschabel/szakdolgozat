@@ -1,6 +1,5 @@
 package hu.szakdolgozat.util;
 
-import hu.szakdolgozat.util.HashUtil;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
