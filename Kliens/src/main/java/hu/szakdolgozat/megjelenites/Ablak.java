@@ -1,6 +1,9 @@
 package hu.szakdolgozat.megjelenites;
 
 import hu.szakdolgozat.kommunikacio.SzerverKapcsolat;
+import hu.szakdolgozat.megjelenites.kepernyo.BejelentkezoKepernyo;
+import hu.szakdolgozat.megjelenites.kepernyo.JatekmenetKepernyo;
+import hu.szakdolgozat.megjelenites.kepernyo.Kepernyo;
 
 import javax.swing.JFrame;
 import java.awt.*;

@@ -1,4 +1,4 @@
-package hu.szakdolgozat.megjelenites;
+package hu.szakdolgozat.megjelenites.kepernyo;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;

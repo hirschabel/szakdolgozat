@@ -12,6 +12,7 @@ public class JatekmenetController implements KeyListener {
         super();
         this.kapcsolat = kapcsolat;
     }
+
     @Override
     public void keyTyped(KeyEvent e) {
         switch (e.getKeyChar()) {

@@ -18,9 +18,7 @@ public class Eszkoztar implements Serializable {
     private int uvegSzam;
 
     public Eszkoztar(int botSzam, int levelSzam, int uvegSzam) {
-        this.botSzam = botSzam;
-        this.levelSzam = levelSzam;
-        this.uvegSzam = uvegSzam;
+        setTargyak(botSzam, levelSzam, uvegSzam);
     }
 
     public void addTargy(long targyId) {

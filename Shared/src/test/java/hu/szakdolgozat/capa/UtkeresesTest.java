@@ -1,7 +1,7 @@
 package hu.szakdolgozat.capa;
 
 import hu.szakdolgozat.Pozicio;
-import hu.szakdolgozat.TerkepKodok;
+import hu.szakdolgozat.util.TerkepKodokUtil;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,11 +9,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class UtkeresesTest {
 
     private static final long[][] MAP = new long[][]{
-            {TerkepKodok.TERKEP_MEZO, TerkepKodok.TERKEP_MEZO, TerkepKodok.TERKEP_MEZO, TerkepKodok.TERKEP_MEZO, TerkepKodok.TERKEP_MEZO},
-            {TerkepKodok.HAJO,        TerkepKodok.TERKEP_MEZO, TerkepKodok.TERKEP_MEZO, TerkepKodok.TERKEP_MEZO, TerkepKodok.TERKEP_MEZO},
-            {TerkepKodok.TERKEP_MEZO, TerkepKodok.TERKEP_MEZO, TerkepKodok.TERKEP_MEZO, TerkepKodok.TERKEP_MEZO, TerkepKodok.TERKEP_MEZO},
-            {TerkepKodok.TERKEP_MEZO, TerkepKodok.TERKEP_MEZO, TerkepKodok.TERKEP_MEZO, TerkepKodok.TERKEP_MEZO, TerkepKodok.TERKEP_MEZO},
-            {TerkepKodok.TERKEP_MEZO, TerkepKodok.TERKEP_MEZO, TerkepKodok.TERKEP_MEZO, TerkepKodok.TERKEP_MEZO, TerkepKodok.TERKEP_MEZO}
+            {TerkepKodokUtil.TERKEP_MEZO, TerkepKodokUtil.TERKEP_MEZO, TerkepKodokUtil.TERKEP_MEZO, TerkepKodokUtil.TERKEP_MEZO, TerkepKodokUtil.TERKEP_MEZO},
+            {TerkepKodokUtil.HAJO,        TerkepKodokUtil.TERKEP_MEZO, TerkepKodokUtil.TERKEP_MEZO, TerkepKodokUtil.TERKEP_MEZO, TerkepKodokUtil.TERKEP_MEZO},
+            {TerkepKodokUtil.TERKEP_MEZO, TerkepKodokUtil.TERKEP_MEZO, TerkepKodokUtil.TERKEP_MEZO, TerkepKodokUtil.TERKEP_MEZO, TerkepKodokUtil.TERKEP_MEZO},
+            {TerkepKodokUtil.TERKEP_MEZO, TerkepKodokUtil.TERKEP_MEZO, TerkepKodokUtil.TERKEP_MEZO, TerkepKodokUtil.TERKEP_MEZO, TerkepKodokUtil.TERKEP_MEZO},
+            {TerkepKodokUtil.TERKEP_MEZO, TerkepKodokUtil.TERKEP_MEZO, TerkepKodokUtil.TERKEP_MEZO, TerkepKodokUtil.TERKEP_MEZO, TerkepKodokUtil.TERKEP_MEZO}
     };
 
     @Test
@@ -23,7 +23,7 @@ class UtkeresesTest {
         Pozicio start = new Pozicio(0, 0);
         Pozicio end = new Pozicio(0, 4);
 
-        Pozicio nextPosition = utkereses.findPath(start, end);
+        Pozicio nextPosition = utkereses.utKereses(start, end);
 
         assertEquals(0, nextPosition.getSorPozicio());
         assertEquals(1, nextPosition.getOszlopPozicio());
@@ -36,7 +36,7 @@ class UtkeresesTest {
         Pozicio start = new Pozicio(0, 0);
         Pozicio end = new Pozicio(4, 4);
 
-        Pozicio nextPosition = utkereses.findPath(start, end);
+        Pozicio nextPosition = utkereses.utKereses(start, end);
 
         assertEquals(0, nextPosition.getSorPozicio());
         assertEquals(1, nextPosition.getOszlopPozicio());
@@ -49,7 +49,7 @@ class UtkeresesTest {
         Pozicio start = new Pozicio(0, 0);
         Pozicio end = new Pozicio(4, 2);
 
-        Pozicio nextPosition = utkereses.findPath(start, end);
+        Pozicio nextPosition = utkereses.utKereses(start, end);
 
         assertEquals(0, nextPosition.getSorPozicio());
         assertEquals(1, nextPosition.getOszlopPozicio());
@@ -62,7 +62,7 @@ class UtkeresesTest {
         Pozicio start = new Pozicio(0, 0);
         Pozicio end = new Pozicio(2, 4);
 
-        Pozicio nextPosition = utkereses.findPath(start, end);
+        Pozicio nextPosition = utkereses.utKereses(start, end);
 
         assertEquals(0, nextPosition.getSorPozicio());
         assertEquals(1, nextPosition.getOszlopPozicio());
@@ -75,7 +75,7 @@ class UtkeresesTest {
         Pozicio start = new Pozicio(0, 0);
         Pozicio end = new Pozicio(4, 0);
 
-        Pozicio nextPosition = utkereses.findPath(start, end);
+        Pozicio nextPosition = utkereses.utKereses(start, end);
 
         assertEquals(0, nextPosition.getSorPozicio());
         assertEquals(1, nextPosition.getOszlopPozicio());

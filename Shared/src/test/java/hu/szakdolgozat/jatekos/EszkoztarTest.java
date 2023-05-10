@@ -1,7 +1,6 @@
 package hu.szakdolgozat.jatekos;
 
-import hu.szakdolgozat.TerkepKodok;
-import hu.szakdolgozat.jatekos.Eszkoztar;
+import hu.szakdolgozat.util.TerkepKodokUtil;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -11,9 +10,9 @@ class EszkoztarTest {
     @Test
     void testAddTargy() {
         Eszkoztar eszkoztar = new Eszkoztar(0, 0, 0);
-        eszkoztar.addTargy(TerkepKodok.BOT);
-        eszkoztar.addTargy(TerkepKodok.LEVEL);
-        eszkoztar.addTargy(TerkepKodok.UVEG);
+        eszkoztar.addTargy(TerkepKodokUtil.BOT);
+        eszkoztar.addTargy(TerkepKodokUtil.LEVEL);
+        eszkoztar.addTargy(TerkepKodokUtil.UVEG);
 
         assertEquals(1, eszkoztar.getBotSzam());
         assertEquals(1, eszkoztar.getLevelSzam());

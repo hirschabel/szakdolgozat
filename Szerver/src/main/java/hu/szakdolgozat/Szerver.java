@@ -22,7 +22,6 @@ public class Szerver {
     private ServerSocket szerver;
     private List<Csatlakozas> csatlakozasok;
     private JatekAdatLista jatekAdatLista;
-    private ScheduledExecutorService executor;
 
     public void startSzerver() {
         System.out.println("---Szerver---");
@@ -33,7 +32,7 @@ public class Szerver {
             jatekAdatLista = new JatekAdatLista();
             Runnable jatekmenet = new Jatekmenet(terkep, csatlakozasok, jatekAdatLista);
 
-            executor = Executors.newScheduledThreadPool(1);
+            ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
             executor.scheduleAtFixedRate(jatekmenet, 0, TICK_MILLISECOND, TimeUnit.MILLISECONDS);
 
             csatlakozasFogadas();
@@ -56,7 +55,7 @@ public class Szerver {
         }
     }
 
-    public void deleteCsatlakozas(Csatlakozas csatlakozas) {
+    public void csatlakozasTorles(Csatlakozas csatlakozas) {
         jatekosSzam--;
         csatlakozasok.remove(csatlakozas);
         csatlakozasFogadas();

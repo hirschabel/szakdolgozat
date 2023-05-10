@@ -62,21 +62,15 @@ public class Eroforras implements Serializable {
     }
 
     public void italVisszatoltes() {
-        if (ital < max_ital) {
-            this.ital++;
-        }
+        ital = Math.min((ital + 1), max_ital);
     }
 
     public void etelVisszatoltes() {
-        if (etel < max_etel) {
-            this.etel++;
-        }
+        etel = Math.min((etel + 1), max_etel);
     }
 
     public void eletVisszatoltes() {
-        if (elet < max_elet) {
-            this.elet += ELET_VISSZATOLTES;
-        }
+        elet = Math.min((elet + ELET_VISSZATOLTES), max_elet);
     }
 
     public void setMax(int maxElet, int maxItal, int maxEtel) {

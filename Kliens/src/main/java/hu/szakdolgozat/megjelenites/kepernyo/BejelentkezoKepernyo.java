@@ -1,5 +1,6 @@
-package hu.szakdolgozat.megjelenites;
+package hu.szakdolgozat.megjelenites.kepernyo;
 
+import hu.szakdolgozat.megjelenites.Ablak;
 import hu.szakdolgozat.util.HashUtil;
 import hu.szakdolgozat.kommunikacio.SzerverKapcsolat;
 
@@ -12,9 +13,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class BejelentkezoKepernyo extends Kepernyo implements ActionListener {
-    private final Ablak ablak;
-    private static final int PORT = 52564;
     private static final String IP_ADDR = "127.0.0.1";
+    private static final int PORT = 52564;
+    private final Ablak ablak;
     private JButton csatlakozas;
     private JTextField felhasznalonevInput;
     private JPasswordField jelszoInput;
@@ -26,7 +27,6 @@ public class BejelentkezoKepernyo extends Kepernyo implements ActionListener {
         this.ablak = ablak;
         komponensekLetrehozasa();
         init(csatlakozas, felhasznalonevInput, felhasznalonevLabel, jelszoInput, jelszoLabel);
-
     }
 
     private void komponensekLetrehozasa() {
@@ -46,7 +46,6 @@ public class BejelentkezoKepernyo extends Kepernyo implements ActionListener {
 
         jelszoInput = new JPasswordField();
         jelszoInput.setBounds(ABLAK_SZELESSEG / 2 - 100, ABLAK_MAGASSAG / 2 - 60 - 15, 200, 30);
-
     }
 
     @Override

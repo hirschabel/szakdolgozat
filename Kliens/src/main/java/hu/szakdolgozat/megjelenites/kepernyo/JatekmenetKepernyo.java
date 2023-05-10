@@ -1,4 +1,4 @@
-package hu.szakdolgozat.megjelenites;
+package hu.szakdolgozat.megjelenites.kepernyo;
 
 import hu.szakdolgozat.*;
 import hu.szakdolgozat.util.KepUtil;
@@ -7,6 +7,7 @@ import hu.szakdolgozat.controller.JatekmenetController;
 import hu.szakdolgozat.jatekos.Eroforras;
 import hu.szakdolgozat.jatekos.Eszkoztar;
 import hu.szakdolgozat.kommunikacio.SzerverKapcsolat;
+import hu.szakdolgozat.util.TerkepKodokUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -65,16 +66,16 @@ public class JatekmenetKepernyo extends Kepernyo {
         for (int sor = 0; sor < HATAR_SOR; sor++) {
             for (int oszlop = 0; oszlop < HATAR_OSZLOP; oszlop++) {
                 long[] templates = new long[]{
-                        TerkepKodok.TERKEP_MEZO,
-                        TerkepKodok.BOT,
-                        TerkepKodok.LEVEL,
-                        TerkepKodok.UVEG,
-                        TerkepKodok.HAJO,
-                        TerkepKodok.VIZTISZTITO,
-                        TerkepKodok.TUZHELY,
-                        TerkepKodok.CAPA,
-                        TerkepKodok.SAJAT_JATEKOS,
-                        TerkepKodok.MASIK_JATEKOS
+                        TerkepKodokUtil.TERKEP_MEZO,
+                        TerkepKodokUtil.BOT,
+                        TerkepKodokUtil.LEVEL,
+                        TerkepKodokUtil.UVEG,
+                        TerkepKodokUtil.HAJO,
+                        TerkepKodokUtil.VIZTISZTITO,
+                        TerkepKodokUtil.TUZHELY,
+                        TerkepKodokUtil.CAPA,
+                        TerkepKodokUtil.SAJAT_JATEKOS,
+                        TerkepKodokUtil.MASIK_JATEKOS
                 };
 
                 int hossz = this.ABLAK_MAGASSAG / 9;
