@@ -1,61 +1,60 @@
 package hu.szakdolgozat.capa;
 
 import hu.szakdolgozat.Pozicio;
-import hu.szakdolgozat.TerkepKodok;
+import hu.szakdolgozat.util.TerkepKodokUtil;
 
 import java.security.SecureRandom;
 import java.util.*;
 
 public class Utkereses {
-    private final long[][] map;
-    private final int width;
-    private final int height;
+    private final long[][] terkep;
+    private final int szelesseg;
+    private final int magassag;
     private static final Random random = new SecureRandom();
 
-    public Utkereses(long[][] map) {
-//        this.random = new SecureRandom();
-        this.map = map;
-        this.width = map.length;
-        this.height = map[0].length;
+    public Utkereses(long[][] terkep) {
+        this.terkep = terkep;
+        this.szelesseg = terkep.length;
+        this.magassag = terkep[0].length;
     }
 
-    public Pozicio findPath(Pozicio start, Pozicio end) {
-        PriorityQueue<Node> openList = new PriorityQueue<>();
-        Set<Node> closedList = new HashSet<>();
+    public Pozicio utKereses(Pozicio start, Pozicio end) {
+        PriorityQueue<Node> nyitottLista = new PriorityQueue<>();
+        Set<Node> zartLista = new HashSet<>();
 
-        Node startNode = new Node(start, null, 0, heuristic(start, end));
-        openList.add(startNode);
+        Node startNode = new Node(start, null, 0, heurisztika(start, end));
+        nyitottLista.add(startNode);
 
-        while (!openList.isEmpty()) {
-            Node current = openList.poll();
+        while (!nyitottLista.isEmpty()) {
+            Node jelenlegi = nyitottLista.poll();
 
-            if (current.pozicio.isRajta(end)) {
-                if (current.parent == null) {
-                    return current.pozicio;
+            if (jelenlegi.pozicio.isRajta(end)) {
+                if (jelenlegi.szulo == null) {
+                    return jelenlegi.pozicio;
                 }
 
-                while (!current.parent.pozicio.isRajta(start)) {
-                    current = current.parent;
+                while (!jelenlegi.szulo.pozicio.isRajta(start)) {
+                    jelenlegi = jelenlegi.szulo;
                 }
-                return current.pozicio;
+                return jelenlegi.pozicio;
             }
 
-            closedList.add(current);
+            zartLista.add(jelenlegi);
 
-            for (Node neighbor : getNeighbors(current, end)) {
-                if (closedList.contains(neighbor)) {
+            for (Node neighbor : szomszedok(jelenlegi, end)) {
+                if (zartLista.contains(neighbor)) {
                     continue;
                 }
 
-                int tentativeGScore = current.gScore + 1;
+                int kiserletiKoltseg = jelenlegi.koltseg + 1;
 
-                if (!openList.contains(neighbor) || tentativeGScore < neighbor.gScore) {
-                    neighbor.parent = current;
-                    neighbor.gScore = tentativeGScore;
-                    neighbor.fScore = neighbor.gScore + heuristic(neighbor.pozicio, end);
+                if (!nyitottLista.contains(neighbor) || kiserletiKoltseg < neighbor.koltseg) {
+                    neighbor.szulo = jelenlegi;
+                    neighbor.koltseg = kiserletiKoltseg;
+                    neighbor.heurisztika = neighbor.koltseg + heurisztika(neighbor.pozicio, end);
 
-                    if (!openList.contains(neighbor)) {
-                        openList.add(neighbor);
+                    if (!nyitottLista.contains(neighbor)) {
+                        nyitottLista.add(neighbor);
                     }
                 }
             }
@@ -64,70 +63,71 @@ public class Utkereses {
     }
 
     public Pozicio randomPoz(Pozicio start, Pozicio end) {
-        List<Node> neighbors = getNeighbors(new Node(start, null, 0, heuristic(start, end)), end);
+        List<Node> neighbors = szomszedok(new Node(start, null, 0, heurisztika(start, end)), end);
         if (neighbors.isEmpty()) {
             return start;
         }
         return neighbors.get(random.nextInt((neighbors.size()))).pozicio;
     }
 
-    private List<Node> getNeighbors(Node node, Pozicio end) {
-        List<Node> neighbors = new ArrayList<>();
+    private List<Node> szomszedok(Node node, Pozicio end) {
+        List<Node> szomszedok = new ArrayList<>();
 
-        int x = node.pozicio.getSorPozicio();
-        int y = node.pozicio.getOszlopPozicio();
+        int sor = node.pozicio.getSorPozicio();
+        int oszlop = node.pozicio.getOszlopPozicio();
 
-        if (isValid(x - 1, y)) {
-            Pozicio pozicio = new Pozicio(x - 1, y);
-            Node neighbor = new Node(pozicio, node, node.gScore + 1, heuristic(pozicio, end));
-            neighbors.add(neighbor);
+        if (ervenyes(sor - 1, oszlop)) {
+            Pozicio pozicio = new Pozicio(sor - 1, oszlop);
+            Node szomszed = new Node(pozicio, node, node.koltseg + 1, heurisztika(pozicio, end));
+            szomszedok.add(szomszed);
         }
 
-        if (isValid(x + 1, y)) {
-            Pozicio pozicio = new Pozicio(x + 1, y);
-            Node neighbor = new Node(pozicio, node, node.gScore + 1, heuristic(pozicio, end));
-            neighbors.add(neighbor);
+        if (ervenyes(sor + 1, oszlop)) {
+            Pozicio pozicio = new Pozicio(sor + 1, oszlop);
+            Node szomszed = new Node(pozicio, node, node.koltseg + 1, heurisztika(pozicio, end));
+            szomszedok.add(szomszed);
         }
 
-        if (isValid(x, y - 1)) {
-            Pozicio pozicio = new Pozicio(x, y - 1);
-            Node neighbor = new Node(pozicio, node, node.gScore + 1, heuristic(pozicio, end));
-            neighbors.add(neighbor);
+        if (ervenyes(sor, oszlop - 1)) {
+            Pozicio pozicio = new Pozicio(sor, oszlop - 1);
+            Node szomszed = new Node(pozicio, node, node.koltseg + 1, heurisztika(pozicio, end));
+            szomszedok.add(szomszed);
         }
 
-        if (isValid(x, y + 1)) {
-            Pozicio pozicio = new Pozicio(x, y + 1);
-            Node neighbor = new Node(pozicio, node, node.gScore + 1, heuristic(pozicio, end));
-            neighbors.add(neighbor);
+        if (ervenyes(sor, oszlop + 1)) {
+            Pozicio pozicio = new Pozicio(sor, oszlop + 1);
+            Node szomszed = new Node(pozicio, node, node.koltseg + 1, heurisztika(pozicio, end));
+            szomszedok.add(szomszed);
         }
 
-        return neighbors;
+        return szomszedok;
     }
 
-    private boolean isValid(int x, int y) {
-        return x >= 0 && x < width && y >= 0 && y < height && (map[x][y] & TerkepKodok.HAJO) == 0;
+    private boolean ervenyes(int sor, int oszlop) {
+        return sor >= 0 && sor < szelesseg && oszlop >= 0 && oszlop < magassag && (terkep[sor][oszlop] & TerkepKodokUtil.HAJO) == 0;
     }
 
-    private int heuristic(Pozicio a, Pozicio b) {
-        return (int)Math.sqrt(Math.pow(b.getSorPozicio() - a.getSorPozicio(), 2) + Math.pow(b.getOszlopPozicio() - a.getOszlopPozicio(), 2));
+    private int heurisztika(Pozicio a, Pozicio b) {
+        return Math.abs(a.getSorPozicio() - b.getSorPozicio()) + Math.abs(a.getOszlopPozicio() - b.getOszlopPozicio());
     }
+
 
     private static class Node implements Comparable<Node> {
         public Pozicio pozicio;
-        public Node parent;
-        public int gScore;
-        public int fScore;
+        public Node szulo;
+        public int koltseg;
+        public int heurisztika;
 
-        public Node(Pozicio pozicio, Node parent, int gScore, int fScore) {
+        public Node(Pozicio pozicio, Node szulo, int koltseg, int heurisztika) {
             this.pozicio = pozicio;
-            this.parent = parent;
-            this.gScore = gScore;
-            this.fScore = fScore;
+            this.szulo = szulo;
+            this.koltseg = koltseg;
+            this.heurisztika = heurisztika;
         }
 
         @Override
         public int compareTo(Node o) {
-            return Integer.compare(fScore, o.fScore);
+            return Integer.compare(heurisztika, o.heurisztika);
         }
 
         @Override

@@ -6,7 +6,6 @@ import hu.szakdolgozat.Pozicio;
 import hu.szakdolgozat.dao.SzintAdatDao;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Getter

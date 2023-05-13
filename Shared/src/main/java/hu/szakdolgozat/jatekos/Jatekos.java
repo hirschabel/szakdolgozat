@@ -1,7 +1,7 @@
 package hu.szakdolgozat.jatekos;
 
 import hu.szakdolgozat.Pozicio;
-import hu.szakdolgozat.TerkepKodok;
+import hu.szakdolgozat.util.TerkepKodokUtil;
 import hu.szakdolgozat.capa.Capa;
 import hu.szakdolgozat.dao.SzintAdatDao;
 import hu.szakdolgozat.hajo.Hajo;
@@ -82,13 +82,13 @@ public class Jatekos {
     public void targyGeneralas() {
         boolean[] targyGeneralas = hajo.getSzintAdat().getTargyGeneralas();
         if (targyGeneralas[0]) {
-            eszkoztar.addTargy(TerkepKodok.LEVEL);
+            eszkoztar.addTargy(TerkepKodokUtil.LEVEL);
         }
         if (targyGeneralas[1]) {
-            eszkoztar.addTargy(TerkepKodok.BOT);
+            eszkoztar.addTargy(TerkepKodokUtil.BOT);
         }
         if (targyGeneralas[2]) {
-            eszkoztar.addTargy(TerkepKodok.UVEG);
+            eszkoztar.addTargy(TerkepKodokUtil.UVEG);
         }
     }
 }

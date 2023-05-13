@@ -2,7 +2,7 @@ package hu.szakdolgozat.kommunikacio;
 
 import hu.szakdolgozat.Pozicio;
 import hu.szakdolgozat.Szerver;
-import hu.szakdolgozat.TerkepKodok;
+import hu.szakdolgozat.util.TerkepKodokUtil;
 import hu.szakdolgozat.adatok.Adat;
 import hu.szakdolgozat.adatok.Csatlakozas;
 import hu.szakdolgozat.adatok.JatekAdat;
@@ -56,11 +56,11 @@ public class KliensKapcsolat implements Runnable {
                 output.close();
                 csatlakozas.getKliens().close();
                 connected = false;
-                szerver.deleteCsatlakozas(csatlakozas);
+                szerver.csatlakozasTorles(csatlakozas);
             }
         } catch (SQLException | IOException | ClassNotFoundException e) {
             connected = false;
-            szerver.deleteCsatlakozas(csatlakozas);
+            szerver.csatlakozasTorles(csatlakozas);
         }
     }
 
@@ -74,7 +74,7 @@ public class KliensKapcsolat implements Runnable {
             } catch (IOException | ClassNotFoundException e) {
                 System.out.println("KILÉPETT");
                 connected = false;
-                szerver.deleteCsatlakozas(csatlakozas);
+                szerver.csatlakozasTorles(csatlakozas);
             }
         }).start();
 
@@ -91,13 +91,13 @@ public class KliensKapcsolat implements Runnable {
                 output.reset();
             } catch (IOException e) {
                 connected = false;
-                szerver.deleteCsatlakozas(csatlakozas);
+                szerver.csatlakozasTorles(csatlakozas);
             }
         }
     }
 
     private long[][] kisTerkepSzerzes(long[][] nagyTerkep) {
-        long[][] kisTerkep = new long[10][10];
+        long[][] kisTerkep = new long[HATAR_SOR][HATAR_OSZLOP];
         Pozicio poz = csatlakozas.getJatekos().getPozicio();
 
         int jatekosSor = poz.getSorPozicio();
@@ -113,7 +113,7 @@ public class KliensKapcsolat implements Runnable {
                 }
             }
         }
-        kisTerkep[HATAR_SOR / 2][HATAR_OSZLOP / 2] |= TerkepKodok.SAJAT_JATEKOS;
+        kisTerkep[HATAR_SOR / 2][HATAR_OSZLOP / 2] |= TerkepKodokUtil.SAJAT_JATEKOS;
         return kisTerkep;
     }
 }

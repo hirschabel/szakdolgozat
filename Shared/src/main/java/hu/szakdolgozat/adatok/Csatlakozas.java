@@ -16,5 +16,6 @@ public class Csatlakozas {
     public Csatlakozas(Socket kliens) {
         this.kliens = kliens;
         this.utasitas = "null";
+        this.jatekos = null;
     }
 }

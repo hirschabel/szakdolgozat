@@ -11,6 +11,7 @@ import hu.szakdolgozat.adatok.targyak.Uveg;
 import hu.szakdolgozat.jatekos.Eszkoztar;
 import hu.szakdolgozat.jatekos.Jatekos;
 import hu.szakdolgozat.logika.Jatekmenet;
+import hu.szakdolgozat.util.TerkepKodokUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -153,8 +154,8 @@ class JatekmenetTest {
 
         jatekmenet.terkepFrissites(jatekosok);
 
-        assertEquals(TerkepKodok.UVEG | TerkepKodok.MASIK_JATEKOS, jatekmenet.getTerkep()[1][1]);
-        assertEquals(TerkepKodok.HAJO, jatekmenet.getTerkep()[10][10]);
+        assertEquals(TerkepKodokUtil.UVEG | TerkepKodokUtil.MASIK_JATEKOS, jatekmenet.getTerkep()[1][1]);
+        assertEquals(TerkepKodokUtil.HAJO, jatekmenet.getTerkep()[10][10]);
     }
 
 }

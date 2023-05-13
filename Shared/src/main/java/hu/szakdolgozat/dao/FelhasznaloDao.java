@@ -6,17 +6,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class FelhasznaloDao {
-    private final Connection connection = AdatbazisCsatlakozas.getConnection();
+    private final Connection connection;
 
-    public FelhasznaloDao() { }
+    public FelhasznaloDao() {
+        this.connection = AdatbazisCsatlakozas.getInstance().getConnection();
+    }
 
     public boolean jatekosLetezik(String felhasznalonev, String jelszo) throws SQLException {
-        try (PreparedStatement stmt = connection.prepareStatement("SELECT jelszo FROM felhasznalo WHERE felhasznalonev = ?")) {
-            stmt.setString(1, felhasznalonev);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                if (rs.getString("jelszo").equals(jelszo)) {
-                    return true;
+        try (PreparedStatement lekerdezes = connection.prepareStatement("SELECT jelszo FROM felhasznalo WHERE felhasznalonev = ?")) {
+            lekerdezes.setString(1, felhasznalonev);
+            try (ResultSet eredmeny = lekerdezes.executeQuery()) {
+                if (eredmeny.next()) {
+                    return eredmeny.getString("jelszo").equals(jelszo);
                 }
             }
         }

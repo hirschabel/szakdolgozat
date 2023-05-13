@@ -2,54 +2,53 @@ package hu.szakdolgozat.dao;
 
 import hu.szakdolgozat.jatekos.Jatekos;
 import hu.szakdolgozat.Pozicio;
-import jakarta.persistence.EntityManager;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-
 import java.util.List;
-
 
 public class JatekosDao {
 
-    public Jatekos getJatekos(String name) {
-        Configuration configuration = new Configuration().configure("hibernate.cfg.xml");
-        Jatekos jatekos;
-        try (SessionFactory sessionFactory = configuration.buildSessionFactory()) {
-            EntityManager em = sessionFactory.createEntityManager();
+    private static final SessionFactory sessionFactory = buildSessionFactory();
 
-            em.getTransaction().begin();
-            jatekos = em.find(Jatekos.class, name);
+    private static SessionFactory buildSessionFactory() {
+        try {
+            return new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
+        } catch (Throwable ex) {
+            throw new ExceptionInInitializerError(ex);
+        }
+    }
+
+    public Jatekos getJatekos(String name) {
+        Jatekos jatekos;
+        try (Session session = sessionFactory.openSession()) {
+            session.getTransaction().begin();
+            jatekos = session.find(Jatekos.class, name);
             if (jatekos == null) {
                 jatekos = new Jatekos(name, new Pozicio());
-                em.persist(jatekos);
+                session.persist(jatekos);
             }
-            jatekos.pozicioRandomizalas(); // Játékos mindig véletlenszerű pozícióban kezd
-            em.getTransaction().commit();
+            jatekos.pozicioRandomizalas();
+            session.getTransaction().commit();
         }
         return jatekos;
     }
 
     public void jatekosokMentese(List<Jatekos> jatekosLista) {
-        Configuration configuration = new Configuration().configure("hibernate.cfg.xml");
-        try (SessionFactory sessionFactory = configuration.buildSessionFactory()) {
-            EntityManager em = sessionFactory.createEntityManager();
-
-            em.getTransaction().begin();
+        try (Session session = sessionFactory.openSession()) {
+            session.getTransaction().begin();
             for (Jatekos jatekos : jatekosLista) {
-                em.merge(jatekos);
+                session.merge(jatekos);
             }
-            em.getTransaction().commit();
+            session.getTransaction().commit();
         }
     }
 
     public void jatekosMentes(Jatekos jatekos) {
-        Configuration configuration = new Configuration().configure("hibernate.cfg.xml");
-        try (SessionFactory sessionFactory = configuration.buildSessionFactory()) {
-            EntityManager em = sessionFactory.createEntityManager();
-
-            em.getTransaction().begin();
-            em.merge(jatekos);
-            em.getTransaction().commit();
+        try (Session session = sessionFactory.openSession()) {
+            session.getTransaction().begin();
+            session.merge(jatekos);
+            session.getTransaction().commit();
         }
     }
 }

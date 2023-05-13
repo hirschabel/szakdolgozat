@@ -9,14 +9,12 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class SzerverKapcsolat {
-
     @Getter
     private Adat adat;
 
     private Socket szerver;
     private ObjectOutputStream out;
     private ObjectInputStream in;
-
     private boolean csatlakozva;
 
     public boolean csatlakozas(String ip, int port, String felhasznaloNev, String jelszo) {
